@@ -1,0 +1,23 @@
+import axios from "axios"
+import { IResource } from "@/interfaces/resources.interface.ts"
+import { IResourcePayload } from "@/types/resource.ts"
+import { DeleteResponseType } from "@/types/responses.ts"
+import { IPlatform } from "@/interfaces/platform.interface.ts"
+
+export default {
+  async getAllResources(): Promise<IPagination<IResource>> {
+    return axios.get("/api/v1/resources").then(({ data }) => data)
+  },
+  async createResource(payload: IResourcePayload): Promise<IResource> {
+    return axios.post("/api/v1/resources", payload).then(({ data }) => data)
+  },
+  async editResource(uuid: string, payload: IResourcePayload): Promise<IResource> {
+    return axios.patch(`/api/v1/resources/${uuid}/uuid`, payload).then(({ data }) => data)
+  },
+  async deleteResource(uuid: string): Promise<DeleteResponseType> {
+    return axios.delete(`/api/v1/resources/${uuid}/uuid`).then(({ data }) => data)
+  },
+  async getPlatforms(): Promise<Array<IPlatform>> {
+    return axios.get("/api/v1/platforms/all").then(({ data }) => data)
+  }
+}

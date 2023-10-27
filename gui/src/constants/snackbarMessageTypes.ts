@@ -1,0 +1,6 @@
+export default {
+  ERROR: "ERROR",
+  WARNING: "WARNING",
+  NOTIFICATION: "NOTIFICATION",
+  SUCCESS: "SUCCESS"
+}

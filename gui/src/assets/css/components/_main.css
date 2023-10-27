@@ -1,0 +1,7 @@
+.text-error {
+  @apply text-sm font-medium text-danger normal-case;
+}
+
+.input--invalid {
+  @apply !border-red-700 border;
+}
