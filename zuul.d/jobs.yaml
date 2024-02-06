@@ -8,15 +8,15 @@
       - nebulous-gui-container-images
     description: Build the container images.
     files: &image_files
-      - ^java-spring-boot-demo/
+      - ^gui/
     vars: &image_vars
       promote_container_image_job: nebulous-gui-upload-container-images
       container_images:
-        - context: java-spring-boot-demo
+        - context: gui
           registry: quay.io
-          repository: quay.io/nebulous/gui-java-spring-boot-demo
+          repository: quay.io/nebulous/gui-builder
           namespace: nebulous
-          repo_shortname: gui-java-spring-boot-demo
+          repo_shortname: gui-builder
           repo_description: ""
 
 - job:
@@ -44,7 +44,7 @@
     description: Run Hadolint on Dockerfile(s).
     vars:
       dockerfiles:
-        - java-spring-boot-demo/Dockerfile
+        - gui/Dockerfile
 
 - job:
     name: nebulous-gui-helm-lint
