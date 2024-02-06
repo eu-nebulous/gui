@@ -4,11 +4,18 @@
 
 replicaCount: 1
 
-image:
-  repository: "quay.io/nebulous/gui-java-spring-boot-demo"
+serverImage:
+  repository: "docker.io/library/nginx"
+  pullPolicy: IfNotPresent
+  tag: "latest"
+
+builderImage:
+  repository: "quay.io/nebulous/gui-builder"
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
   tag: ""
+
+builderEnv: []
 
 imagePullSecrets: []
 nameOverride: ""

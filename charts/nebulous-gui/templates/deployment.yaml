@@ -27,15 +27,32 @@ spec:
       serviceAccountName: {{ include "nebulous-gui.serviceAccountName" . }}
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
-      containers:
-        - name: {{ .Chart.Name }}
+      initContainers:
+        - name: {{ .Chart.Name }}-builder
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
-          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
-          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          image: "{{ .Values.builderImage.repository }}:{{ .Values.builderImage.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.builderImage.pullPolicy }}
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          command:
+            - npx
+            - vite
+            - build
+          volumeMounts:
+            - name: static-files
+              mountPath: /app/dist
+          env:
+            {{- toYaml .Values.builderEnv | nindent 12 }}
+      containers:
+        - name: {{ .Chart.Name }}-server
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.serverImage.repository }}:{{ .Values.serverImage.tag }}"
+          imagePullPolicy: {{ .Values.serverImage.pullPolicy }}
           ports:
             - name: http
-              containerPort: 8080
+              containerPort: 80
               protocol: TCP
           livenessProbe:
             httpGet:
@@ -47,6 +64,9 @@ spec:
               port: http
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
+          volumeMounts:
+            - name: static-files
+              mountPath: /usr/share/nginx/html
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
@@ -59,3 +79,6 @@ spec:
       tolerations:
         {{- toYaml . | nindent 8 }}
       {{- end }}
+      volumes:
+        - name: static-files
+          emptyDir: {}
