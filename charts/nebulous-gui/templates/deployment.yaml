@@ -54,6 +54,11 @@ spec:
             - name: http
               containerPort: 80
               protocol: TCP
+          env:
+          - name: NODE_ENV
+            value: "{{ .Values.env.NODE_ENV }}"
+          - name: VITE_API_URL
+            value: "{{ .Values.env.VITE_API_URL }}"
           livenessProbe:
             httpGet:
               path: /
