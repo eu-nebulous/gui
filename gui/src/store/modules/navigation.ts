@@ -30,6 +30,12 @@ export const useSideMenuStore = defineStore("sideMenu", {
             pageName: "applications-resources",
             title: "Resources"
           }
+          ,
+          {
+            pageName: "policy-editor",
+            title: "Security Policies"
+          }
+
         ]
       },
       {

@@ -3,6 +3,7 @@
   <div class="py-5 md:py-0">
     <MobileMenu v-if="!isMenuHidden" />
     <Header v-if="!isMenuHidden" layout="side-menu" />
+
     <div class="flex overflow-hidden">
       <SideMenu v-if="!isMenuHidden" />
       <!-- BEGIN: Content -->
@@ -30,6 +31,7 @@ import SideMenu from "@/components/SideMenu"
 import MobileMenu from "@/components/MobileMenu"
 import Modal from "@/components/Modal"
 import Snackbar from "@/components/Snackbar"
+import Footer from "@/base-components/Headless/Menu/Footer.vue";
 
 const route: RouteLocationNormalizedLoaded = useRoute()
 
@@ -44,4 +46,6 @@ watch(
   },
   { deep: true }
 )
+
+
 </script>

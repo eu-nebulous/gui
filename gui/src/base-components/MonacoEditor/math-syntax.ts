@@ -8,6 +8,7 @@ export const keywords = [
   "POW",
   "LOG",
   "LOG10",
+  "MEAN",
   "LN2",
   "LN10",
   "LOG10E",

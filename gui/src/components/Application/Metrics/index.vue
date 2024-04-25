@@ -3,7 +3,8 @@
     <Templates :templates="templates" />
     <Parameters :parameters="parameters" :templateNames="templateNames" />
 
-    <Metrics :metrics="metrics" :componentList="props.payload.componentList" />
+    <Metrics :metrics="metrics" :componentList="props.payload.componentList"
+      :templateNames="templateNames"/>
 
     <div class="flex flex-col space-y-5">
       <p class="text-2xl">SLO</p>
@@ -55,6 +56,7 @@ const props = withDefaults(defineProps<MetricsProps>(), {
       {
         type: "composite",
         name: "",
+        template: "",
         formula: "",
         isWindowInput: true,
         isWindowOutput: true,

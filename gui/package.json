@@ -2,6 +2,9 @@
   "name": "enigma-nebulous",
   "private": true,
   "version": "0.0.0",
+  "engines": {
+    "node": "v21.4.0"
+  },
   "scripts": {
     "serve": "vite",
     "build": "vue-tsc && vite build",

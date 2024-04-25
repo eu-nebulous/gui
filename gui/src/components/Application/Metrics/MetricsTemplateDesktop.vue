@@ -95,6 +95,19 @@
                           <option value="components">Components</option>
                         </Select>
                       </div>
+                      <div class="flex flex-col flex-grow">
+                        <Label>Template</Label>
+                        <Select
+                            v-model="metric.template"
+                            :class="{
+                              'input--invalid': v.template?.$error || hasBackendError(`metrics[${index}].template`)
+                            }"
+                        >
+                          <option v-for="(template, templateOptionIndex) in templateNames" :key="templateOptionIndex">
+                            {{ template }}
+                          </option>
+                        </Select>
+                      </div>
 
                       <div v-if="metric.level === 'components' && metric.components" class="flex flex-col">
                         <Label>Components</Label>
@@ -118,6 +131,7 @@
                           <template v-else> <option>No keys available</option> </template>
                         </TomSelect>
                       </div>
+
                     </div>
 
                     <div class="flex flex-col">
@@ -139,7 +153,7 @@
                           id="windowInput"
                           v-model="metric.isWindowInput"
                         />
-                        <FormCheck.Label class="font-bold" for="windowInput">Window Input</FormCheck.Label>
+                        <FormCheck.Label class="font-bold" for="windowInput">Input Intervals</FormCheck.Label>
                       </FormCheck>
                       <div v-if="metric.isWindowInput && metric.input" class="flex space-x-3">
                         <div class="flex flex-col flex-grow">
@@ -149,7 +163,7 @@
                             v-model="metric.input.type"
                             :class="{ 'input--invalid': hasBackendError(`metrics[${index}].input.type`) }"
                           >
-                            <option v-for="(option, behaviorIndex) in BEHAVIOR_OPTIONS" :key="behaviorIndex">
+                            <option v-for="(option, behaviorIndex) in BEHAVIOR_OPTIONS_INPUT" :key="behaviorIndex">
                               {{ option }}
                             </option>
                           </Select>
@@ -184,7 +198,7 @@
                           id="windowOutput"
                           v-model="metric.isWindowOutput"
                         />
-                        <FormCheck.Label class="font-bold" for="windowOutput">Window Output</FormCheck.Label>
+                        <FormCheck.Label class="font-bold" for="windowOutput">Output Intervals</FormCheck.Label>
                       </FormCheck>
                       <div v-if="metric.isWindowOutput && metric.output" class="flex flex-col">
                         <div class="flex space-x-3">
@@ -195,7 +209,7 @@
                               v-model="metric.output.type"
                               :class="{ 'input--invalid': hasBackendError(`metrics[${index}].output.type`) }"
                             >
-                              <option v-for="(option, behaviorIndex) in BEHAVIOR_OPTIONS" :key="behaviorIndex">
+                              <option v-for="(option, behaviorIndex) in BEHAVIOR_OPTIONS_OUTPUT" :key="behaviorIndex">
                                 {{ option }}
                               </option>
                             </Select>
@@ -276,48 +290,41 @@
                     </div>
 
                     <div class="flex flex-col">
-                      <FormCheck class="mb-2">
-                        <FormCheck.Input
-                          class="border"
-                          type="checkbox"
-                          id="windowInputRaw"
-                          v-model="metric.isWindowInputRaw"
-                        />
-                        <FormCheck.Label class="font-bold" for="windowInputRaw">Window Input</FormCheck.Label>
-                      </FormCheck>
-                      <div v-if="metric.isWindowInputRaw && metric.inputRaw" class="flex space-x-3">
-                        <div class="flex flex-col flex-grow">
-                          <Label>Type</Label>
-                          <Select
-                            class="w-auto capitalize"
-                            v-model="metric.inputRaw.type"
-                            :class="{ 'input--invalid': hasBackendError(`metrics[${index}].input.type`) }"
-                          >
-                            <option v-for="(option, behaviorIndex) in BEHAVIOR_OPTIONS" :key="behaviorIndex">
-                              {{ option }}
+                      <div class="flex flex-col">
+                        <Label>Level</Label>
+                        <Select
+                            v-model="metric.level"
+                            @change="emit('levelChangeHandler', index, $event as HTMLElementEvent<HTMLSelectElement>)"
+                            :class="{
+                            'input--invalid': v.level?.$error || hasBackendError(`metrics[${index}].level`)
+                          }"
+                        >
+                          <option value="global">Global</option>
+                          <option value="components">Components</option>
+                        </Select>
+                      </div>
+
+                      <div v-if="metric.level === 'components' && metric.components" class="flex flex-col">
+                        <Label>Components</Label>
+                        <TomSelect
+                            v-model="metric.components"
+                            class="w-full"
+                            multiple
+                            :class="{
+                            'input--invalid': v.components?.$error || hasBackendError(`metrics[${index}].components`)
+                          }"
+                        >
+                          <template v-if="componentList.length">
+                            <option
+                                v-for="(option, componentOptionIndex) in componentList"
+                                :key="componentOptionIndex"
+                                :value="option.value"
+                            >
+                              {{ option.label }}
                             </option>
-                          </Select>
-                        </div>
-                        <div class="flex flex-col flex-grow">
-                          <Label>Interval</Label>
-                          <Input
-                            type="number"
-                            v-model="metric.inputRaw.interval"
-                            :class="{ 'input--invalid': hasBackendError(`metrics[${index}].input.interval`) }"
-                          />
-                        </div>
-                        <div class="flex flex-col flex-grow">
-                          <Label>Unit</Label>
-                          <Select
-                            class="w-auto capitalize"
-                            v-model="metric.inputRaw.unit"
-                            :class="{ 'input--invalid': hasBackendError(`metrics[${index}].input.unit`) }"
-                          >
-                            <option v-for="(option, timeUnitIndex) in UNIT_TIME_OPTIONS" :key="timeUnitIndex">
-                              {{ option }}
-                            </option>
-                          </Select>
-                        </div>
+                          </template>
+                          <template v-else> <option>No keys available</option> </template>
+                        </TomSelect>
                       </div>
                     </div>
 
@@ -329,7 +336,7 @@
                           id="windowOutputRaw"
                           v-model="metric.isWindowOutputRaw"
                         />
-                        <FormCheck.Label class="font-bold" for="windowOutputRaw">Window Output</FormCheck.Label>
+                        <FormCheck.Label class="font-bold" for="windowOutputRaw">Output Intervals</FormCheck.Label>
                       </FormCheck>
                       <div v-if="metric.isWindowOutputRaw && metric.outputRaw" class="flex flex-col">
                         <div class="flex space-x-3">
@@ -388,7 +395,7 @@ import { Disclosure } from "@/base-components/Headless"
 import { ValidateEach } from "@vuelidate/components"
 import { FormCheck } from "@/base-components/Form"
 import { IMetricComposite, IMetricRaw } from "@/interfaces/metrics.interface.ts"
-import { UNIT_TIME_OPTIONS, BEHAVIOR_OPTIONS } from "@/constants"
+import { UNIT_TIME_OPTIONS, BEHAVIOR_OPTIONS, BEHAVIOR_OPTIONS_INPUT ,BEHAVIOR_OPTIONS_OUTPUT} from "@/constants"
 import Select from "@/base-components/Form/FormSelect.vue"
 import Label from "@/base-components/Form/FormLabel.vue"
 import Input from "@/base-components/Form/FormInput.vue"
@@ -405,8 +412,10 @@ const emit = defineEmits<{
 }>()
 const props = defineProps<{
   metrics: Array<IMetricComposite | IMetricRaw>
-  componentList: Array<{ label: string; value: string }>
+  componentList: Array<{ label: string; value: string }>,
+  templateNames: Array<string>
 }>()
+
 
 const {
   localMetrics,

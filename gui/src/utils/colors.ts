@@ -54,6 +54,9 @@ const getColor = (colorKey: DotNestedKeys<Colors>, opacity: number = 1) => {
 }
 
 const generateColor = (experimental: string): string => {
+  if(!experimental){
+    return PLATFORM_COLOR['bg-indigo-600']
+  }
   const colorKey = [...experimental].reduce((acc, char) => acc + char.charCodeAt(0), 0) % PLATFORM_COLOR.length
   return PLATFORM_COLOR[colorKey]
 }

@@ -1,6 +1,6 @@
 import axios from "axios"
 import {IApplication, IApplicationOverview} from "@/interfaces/application.interface.ts"
-import {DeleteResponseType, DeployResponseType} from "@/types/responses.ts"
+import {DeleteResponseType, DeployResponseType, PolicyResponseType} from "@/types/responses.ts"
 import {IVariable} from "@/interfaces/variables.interface.ts"
 import {IResource} from "@/interfaces/resources.interface.ts"
 import {ITemplate} from "@/interfaces/template.interface.ts"
@@ -66,6 +66,7 @@ export default {
                             level: metric.level,
                             components: metric.components,
                             name: metric.name,
+                            template: metric.template,
                             formula: metric.formula,
                             isWindowInput: metric.isWindowInput,
                             input: {
@@ -84,14 +85,10 @@ export default {
                         return {
                             type: metric.type,
                             name: metric.name,
+                            level: metric.level,
+                            components: metric.components,
                             sensor: metric.sensor,
                             config: metric.config,
-                            isWindowInputRaw: metric.isWindowInputRaw,
-                            inputRaw: {
-                                type: metric.inputRaw?.type ?? "all",
-                                interval: metric.inputRaw?.interval ?? 30,
-                                unit: metric.inputRaw?.unit ?? "sec"
-                            },
                             isWindowOutputRaw: metric.isWindowOutputRaw,
                             outputRaw: {
                                 type: metric.outputRaw?.type ?? "all",
@@ -137,6 +134,11 @@ export default {
     },
     async deployApplication(uuid: string): Promise<DeployResponseType> {
         return axios.post(`/api/v1/application/${uuid}/uuid/deploy`).then(({data}) => data)
+    },
+    async publishPolicies(policies:string): Promise<PolicyResponseType> {
+        console.log("Publishing policies" , policies)
+        return axios.post(`/api/v1/policies/publish`,{policies:policies}).then(({data}) => data)
     }
+
 
 }

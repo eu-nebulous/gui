@@ -7,6 +7,7 @@
     returnRouteName="applications"
     :responseErrorMessages="responseErrorMessages"
     :v$="v$"
+    :save-enabled="applicationData.status =='draft'"
     @saveClick="saveClickHandler"
   >
     <template #title>
@@ -72,6 +73,7 @@ const props = withDefaults(defineProps<ApplicationProps>(), {
         isWindowInput: true,
         isWindowOutput: true,
         level: "global",
+        template: "",
         components: [],
         input: {
           type: "all",

@@ -1,10 +1,5 @@
 <template>
   <div class="flex flex-col box p-5 flex-grow space-y-5">
-    <div class="flex items-center space-x-4">
-      <p class="text-2xl">Resources</p>
-      <Lucide icon="PlusCircle" @click="redirectToResources" />
-    </div>
-
     <div class="flex-grow overflow-y-auto h-0">
       <div
         v-for="(resource, index) in resources"
@@ -58,6 +53,7 @@ const props = withDefaults(defineProps<ResourcesProps>(), {
 })
 
 const resources = computed<Array<IAppResource>>(() =>
+
   resourceStore.resources.results.map((resource) => {
     // prettier-ignore
     const isEnabled = props.payload.appResources
@@ -65,7 +61,7 @@ const resources = computed<Array<IAppResource>>(() =>
     return {
       uuid: resource.uuid,
       title: resource.title,
-      platform: resource.platform,
+      platform: resource.platform.title,
       enabled: isEnabled
     }
   })

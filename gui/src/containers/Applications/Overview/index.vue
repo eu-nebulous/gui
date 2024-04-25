@@ -28,7 +28,7 @@
         </div>
         <div class="flex space-x-2">
 
-          <Lucide v-if="application.status=='ready'" icon="PlayCircle" class="w-10 text-white" @click="deployApplication(application)" />
+          <Lucide  icon="PlayCircle" class="w-10 text-white" @click="deployApplication(application)" />
           <Lucide v-if="application.status=='draft' || application.status=='ready' || !application.status" icon="Pencil" class="w-10 text-warning" @click="toApplicationEditing(application)" />
           <Lucide v-if="application.status=='draft' || application.status=='ready' || !application.status" icon="Trash2" class="w-10 text-danger" @click="removeApplication(application.uuid)" />
         </div>
@@ -164,9 +164,7 @@ const removeApplication = (uuid: string) => {
 }
 
 const toApplicationEditing = (application: IApplication) => {
-  if(application.status == 'draft' || !application.status){
-    router.push({ name: "application", params: { appUuid: application.uuid } })
-  }
+  router.push({ name: "application", params: { appUuid: application.uuid } })
 }
 const deployApplication = (application: IApplication) =>{
 

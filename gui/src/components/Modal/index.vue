@@ -1,5 +1,5 @@
 <template>
-  <Dialog static size="xl" :open="Boolean(openedModalWindow)" @close="() => null">
+  <Dialog static  scrollable size="xl" :open="Boolean(openedModalWindow)" @close="() => null">
     <Dialog.Panel>
       <Snackbar v-if="uiStore.snackbarMessage" />
       <component v-if="openedModalWindow" :is="components[openedModalWindow.name]" :payload="openedModalWindow.payload">

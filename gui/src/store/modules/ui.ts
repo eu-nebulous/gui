@@ -42,6 +42,7 @@ export const useUIStore = defineStore("ui", {
             controlledWindowClosure: true,
             isConfirmPresent: true,
             confirmAction: () => {
+              console.log("Confirm action")
               this.openedModalWindow = null
               this.setSnackbarMessage()
             },

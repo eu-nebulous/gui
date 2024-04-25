@@ -17,7 +17,11 @@
         <div class="hidden md:flex w-full max-w-4xl mr-8">
           <slot name="title" />
         </div>
-        <Button variant="primary" class="ml-auto" @click="onSaveClick">Save</Button>
+        <div class="ml-auto" v-if="!saveEnabled">
+        </div>
+        <Button variant="primary" class="ml-auto" @click="onSaveClick"
+          v-if="saveEnabled"
+        >Save</Button>
         <Button
           v-if="currentStage.next"
           variant="primary"
@@ -104,7 +108,9 @@
     <!-- BEGIN: CANCEL BUTTONS LINE -->
     <div class="pb-2 mt-auto">
       <div class="flex justify-between items-end mt-5">
-        <Button variant="outline-danger" class="ml-auto" @click="onExitClickHandler">Cancel</Button>
+        <Button variant="outline-danger" class="ml-auto" @click="onExitClickHandler">
+          {{saveEnabled ? 'Cancel' : 'Close'}}
+        </Button>
       </div>
     </div>
     <!-- END: CANCEL BUTTONS LINE -->
@@ -126,6 +132,7 @@ const router = useRouter()
 
 interface MultiStepsProviderProps {
   stages: Record<string, Stage>
+  saveEnabled: boolean
   entrypointComponent: string
   returnRouteName: string
   responseErrorMessages: Array<string>
@@ -165,6 +172,7 @@ watch(currentStageName, () => {
 
 const clientErrorMessages = ref<Array<string>>([])
 
+const saveEnabled = computed(() => props.saveEnabled)
 const currentStage = computed<Stage>(() => props.stages[currentStageName.value])
 const visibleStagesHeads = computed(() => Object.values(props.stages).filter(({ isInvisible }) => !isInvisible))
 const lastStageNumber = computed(() => Math.max(...Object.values(props.stages).map(({ stage }) => stage)))

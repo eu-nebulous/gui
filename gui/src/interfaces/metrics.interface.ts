@@ -7,14 +7,15 @@ export interface IWindowController {
 }
 
 export interface IMetric {
-  name: string
+  name: string,
+  level: "global" | "components"
+  components?: Array<string>
 }
 
 export interface IMetricComposite extends IMetric {
   type: "composite"
-  level: "global" | "components"
-  components?: Array<string>
   formula: string
+  template: string
   isWindowInput: boolean
   isWindowOutput: boolean
   input: IWindowController | null
@@ -24,9 +25,7 @@ export interface IMetricComposite extends IMetric {
 export interface IMetricRaw extends IMetric {
   type: "raw"
   sensor: string
-  isWindowInputRaw: boolean
   isWindowOutputRaw: boolean
-  inputRaw: IWindowController | null
   outputRaw: IWindowController | null
   config: Array<RawMetricConfigType>
 }

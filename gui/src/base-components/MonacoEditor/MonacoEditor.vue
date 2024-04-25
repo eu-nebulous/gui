@@ -19,7 +19,7 @@ import ICodeEditor = editor.ICodeEditor
 
 interface IEditorProps {
   modelValue: string
-  language: "yaml" | "math"
+  language: "yaml" | "math" | "json" | "casbin"
   theme?: string
   fontSize?: number
   destroyDelay?: number

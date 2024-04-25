@@ -254,51 +254,7 @@
                   <Lucide icon="Trash2" class="ml-3 text-danger" @click="removeSetting(metric, settingIndex)" />
                 </div>
 
-                <div class="flex flex-col">
-                  <FormCheck class="mb-2">
-                    <FormCheck.Input
-                      class="border"
-                      type="checkbox"
-                      id="windowInputRaw"
-                      v-model="metric.isWindowInputRaw"
-                    />
-                    <FormCheck.Label class="font-bold" for="windowInputRaw">Window Input</FormCheck.Label>
-                  </FormCheck>
-                  <div v-if="metric.isWindowInputRaw && metric.inputRaw" class="flex space-x-3">
-                    <div class="flex flex-col flex-grow">
-                      <Label>Type</Label>
-                      <Select
-                        class="w-auto capitalize"
-                        v-model="metric.inputRaw.type"
-                        :class="{ 'input--invalid': hasBackendError(`metrics[${index}].input.type`) }"
-                      >
-                        <option v-for="(option, behaviorIndex) in BEHAVIOR_OPTIONS" :key="behaviorIndex">
-                          {{ option }}
-                        </option>
-                      </Select>
-                    </div>
-                    <div class="flex flex-col flex-grow">
-                      <Label>Interval</Label>
-                      <Input
-                        type="number"
-                        v-model="metric.inputRaw.interval"
-                        :class="{ 'input--invalid': hasBackendError(`metrics[${index}].input.interval`) }"
-                      />
-                    </div>
-                    <div class="flex flex-col flex-grow">
-                      <Label>Unit</Label>
-                      <Select
-                        class="w-auto capitalize"
-                        v-model="metric.inputRaw.unit"
-                        :class="{ 'input--invalid': hasBackendError(`metrics[${index}].input.unit`) }"
-                      >
-                        <option v-for="(option, timeUnitIndex) in UNIT_TIME_OPTIONS" :key="timeUnitIndex">
-                          {{ option }}
-                        </option>
-                      </Select>
-                    </div>
-                  </div>
-                </div>
+
 
                 <div class="flex flex-col">
                   <FormCheck class="mb-2">

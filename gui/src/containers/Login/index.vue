@@ -24,6 +24,14 @@
     <!-- <p class="text-right">
         <a class="text-blue-600 text-sm font-light hover:underline"> Forgot Password? </a>
       </p> -->
+
+    <div class="text-slate-200 dark:text-slate-800 text-center">
+      {{ environment }} | {{ build_id }} | {{ context }}
+    </div>
+    <div class="text-white dark:text-slate-800 text-center">
+      {{ backend }}
+    </div>
+
   </form>
 </template>
 
@@ -38,8 +46,12 @@ import { FormInput } from "@/base-components/Form"
 import { useUserStore } from "@/store/modules/user.ts"
 import { ICredentials } from "@/interfaces/user.interface.ts"
 
-const userStore = useUserStore()
 
+const userStore = useUserStore()
+const backend = import.meta.env.VITE_API_URL
+const environment = import.meta.env.NODE_VERSION
+const build_id = import.meta.env.BUILD_ID
+const context = import.meta.env.CONTEXT
 const form = reactive<ICredentials>({
   username: "",
   password: ""

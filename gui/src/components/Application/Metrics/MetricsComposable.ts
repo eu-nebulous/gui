@@ -1,4 +1,4 @@
-import { computed, reactive, ref } from "vue"
+import { computed } from 'vue';
 import { IMetricComposite, IMetricRaw } from "@/interfaces/metrics.interface.ts"
 import _ from "lodash"
 import { required } from "@vuelidate/validators"
@@ -8,30 +8,25 @@ export function useMetrics(metrics: Array<IMetricComposite | IMetricRaw>) {
   const localMetrics = computed(() => metrics)
   const previouslyEditedMetricsData: Record<number, IMetricComposite | IMetricRaw> = {}
 
-  const metricsRawRules = {
+
+  const metricsRawRules = computed(() => ({
     name: { required }
-  }
+  }));
 
-  const metricsCompositeRules = {
+  const metricsCompositeRules = computed(() => ({
     name: { required },
     formula: { required }
-  }
-
-  const metricRules = reactive({
-    name: { required },
-    formula: { required }
-  })
-
-  // Could not make it work better. Only "reactive" can keep validation rules dynamic
-  const getValidationRules = (type: string) => {
-    if (type === "composite") {
-      Object.assign(metricRules, { formula: { required } })
-    } else {
-      // @ts-ignore
-      delete metricRules.formula
+  }));
+  
+    const getValidationRules = (type:string) => {
+    if (type === 'composite') {
+      return metricsCompositeRules.value;
+    } else if (type === 'raw') {
+      return metricsRawRules.value;
     }
-    return metricRules
-  }
+    return { name: { required } };
+  };
+
 
   const metricTypeChangeHandler = (index: number, event: HTMLElementEvent<HTMLSelectElement>) => {
     const { target } = event
@@ -45,11 +40,13 @@ export function useMetrics(metrics: Array<IMetricComposite | IMetricRaw>) {
         type: "composite",
         name: "",
         formula: "",
+        template:"",
+        level:"global",
+        components:[],
         isWindowInput: true,
         isWindowOutput: true,
-        level: "global",
         input: {
-          type: "all",
+          type: "batch",
           interval: 0,
           unit: "ms"
         },
@@ -63,13 +60,9 @@ export function useMetrics(metrics: Array<IMetricComposite | IMetricRaw>) {
       localMetrics.value[index] = {
         type: "raw",
         isWindowOutputRaw: true,
-        isWindowInputRaw: true,
+        level:"global",
+        components:[],
         outputRaw: {
-          type: "all",
-          interval: 0,
-          unit: "ms"
-        },
-        inputRaw: {
           type: "all",
           interval: 0,
           unit: "ms"

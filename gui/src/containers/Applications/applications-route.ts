@@ -4,6 +4,8 @@ const ApplicationsOverview = () =>
   import(/* webpackChunkName: "ApplicationsOverview" */ "@/containers/Applications/Overview")
 const ApplicationsResources = () =>
   import(/* webpackChunkName: "ApplicationsResources" */ "@/containers/Applications/Resources")
+const ApplicationsPolicyEditor = () =>
+  import(/* webpackChunkName: "ApplicationsResources" */ "@/containers/Applications/PolicyEditor")
 const ApplicationCreation = () =>
   import(/* webpackChunkName: "ApplicationCreation" */ "@/containers/Applications/ApplicationCreation")
 
@@ -32,6 +34,12 @@ const ApplicationsRoute: RouteRecordRaw = {
       name: "applications-resources",
       component: ApplicationsResources
     },
+    {
+      path: "policy-editor",
+      name: "policy-editor",
+      component: ApplicationsPolicyEditor
+    },
+
     {
       path: "creation",
       name: "application-creation",

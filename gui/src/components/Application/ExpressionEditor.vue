@@ -66,6 +66,7 @@
                     }"
                   >
                     <option value="maximize">Maximize Utility</option>
+                    <option value="minimize">Minimize Utility</option>
                     <option value="constant">Constant</option>
                   </FormSelect>
                   <Lucide icon="Trash2" class="w-10 text-danger" @click="removeFunction(index)" />
