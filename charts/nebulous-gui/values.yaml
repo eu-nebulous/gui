@@ -88,7 +88,4 @@ tolerations: []
 
 affinity: {}
 
-env:
-  NODE_ENV: "production"
-  VITE_API_URL: "http://nebulous-gui-controller:3000"
-
+env: []

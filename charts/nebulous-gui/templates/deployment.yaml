@@ -55,10 +55,7 @@ spec:
               containerPort: 80
               protocol: TCP
           env:
-          - name: NODE_ENV
-            value: "{{ .Values.env.NODE_ENV }}"
-          - name: VITE_API_URL
-            value: "{{ .Values.env.VITE_API_URL }}"
+            {{- toYaml .Values.env | nindent 12 }}
           livenessProbe:
             httpGet:
               path: /
