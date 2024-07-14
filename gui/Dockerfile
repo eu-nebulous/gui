@@ -1,4 +1,19 @@
-FROM docker.io/library/node:21.4.0-bookworm
-COPY . /app
+# Build the Vue app
+FROM node:20 as build-stage
 WORKDIR /app
-RUN corepack enable pnpm && pnpm install && npx vue-tsc
+COPY package*.json ./
+COPY .env.docker ./.env
+
+RUN npm install
+COPY ./ .
+RUN npm run build
+
+# Copy the compiled app in an NGINX contaier
+FROM nginx:alpine as production-stage
+RUN mkdir /app
+COPY --from=build-stage /app/dist /usr/share/nginx/html
+
+# Executing the script at container runtime
+COPY set_env.sh /docker-entrypoint.d/
+RUN chmod +x /docker-entrypoint.d/set_env.sh
+

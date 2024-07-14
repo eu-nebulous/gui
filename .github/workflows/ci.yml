@@ -3,10 +3,12 @@ on:
   push:
     branches:
       - main
+      - development
       - r[1-9]
   pull_request:
     branches:
       - main
+      - development
       - r[1-9]
 jobs:
   build-and-push-gui-builder:

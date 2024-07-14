@@ -62,6 +62,7 @@ const resources = computed<Array<IAppResource>>(() =>
       uuid: resource.uuid,
       title: resource.title,
       platform: resource.platform.title,
+      regions: resource.regions,
       enabled: isEnabled
     }
   })

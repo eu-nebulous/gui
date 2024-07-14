@@ -1,0 +1,30 @@
+image: python:3.7.2
+
+clone:
+  depth: full
+
+definitions:
+  services:
+    docker:
+      memory: 2048
+  steps:
+    - step: &deploy-image
+        name: Deploy to Quay
+        services:
+          - docker
+        caches:
+          - docker
+        script:
+          - echo "$QUAY_TOKEN" | docker login quay.io -u "$QUAY_USERNAME" --password-stdin
+          - docker build -t quay.io/nebulous/gui-builder:${BITBUCKET_BRANCH}-${BITBUCKET_BUILD_NUMBER} .
+          - docker push quay.io/nebulous/gui-builder:${BITBUCKET_BRANCH}-${BITBUCKET_BUILD_NUMBER}
+
+pipelines:
+
+  branches:
+    master:
+       - step: *deploy-image
+
+    development:
+      - step: *deploy-image
+
