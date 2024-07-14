@@ -16,7 +16,7 @@
       <Menu.Divider class="bg-white/[0.08]" />
       <Menu.Item class="hover:bg-white/5">
         <div class="dark:text-slate-300">
-          {{ backend }}<br/>
+          <a :href="backend+'/login'" target="_blank">{{backend}}</a><br/>
           {{ environment }}<br/>
           {{ build_id }}<br/>
           {{ context }}<br/>

@@ -60,42 +60,14 @@ const props = withDefaults(defineProps<ApplicationProps>(), {
     content: "",
     status:"draft",
     uuid:"",
-    variables: [{ name: "", lowerValue: 0, higherValue: 0 }],
-    environmentVariables: [{ name: "", value: "", secret: true }],
+    variables: [],
+    environmentVariables: [],
     resources: [],
-    templates: [{ id: "", type: "int", minValue: 0, maxValue: 0, unit: "ms" }],
-    parameters: [{ name: "", template: "" }],
-    metrics: [
-      {
-        type: "composite",
-        name: "",
-        formula: "",
-        isWindowInput: true,
-        isWindowOutput: true,
-        level: "global",
-        template: "",
-        components: [],
-        input: {
-          type: "all",
-          interval: 30,
-          unit: "sec"
-        },
-        output: {
-          type: "all",
-          interval: 30,
-          unit: "sec"
-        }
-      }
-    ],
-    sloViolations: { nodeKey: uuid(), isComposite: true, condition: "AND", not: false, children: [] },
-    utilityFunctions: [
-      {
-        functionName: "",
-        functionType: "maximize",
-        functionExpression: "",
-        functionExpressionVariables: []
-      }
-    ]
+    templates: [],
+    parameters: [],
+    metrics: [],
+    sloViolations: { },
+    utilityFunctions: []
   })
 })
 
