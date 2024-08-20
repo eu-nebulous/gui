@@ -37,7 +37,6 @@
 @import "simplebar/src/simplebar.css";
 @import "dropzone/dist/dropzone.css";
 @import "tabulator-tables/dist/css/tabulator.css";
-@import "tom-select/dist/css/tom-select.css";
 @import "zoom-vanilla.js/dist/zoom.css";
 @import "toastify-js/src/toastify.css";
 @import "highlight.js/styles/github.css";
@@ -48,6 +47,7 @@
 @import "tiny-slider/dist/tiny-slider.css";
 @import "leaflet/dist/leaflet.css";
 @import "leaflet.markercluster/dist/MarkerCluster.css";
+@import "vue-multiselect/dist/vue-multiselect.css";
 
 /*
    |--------------------------------------------------------------------------
@@ -73,9 +73,12 @@
 @import "./components/_toastify.css";
 @import "./components/_transitions.css";
 @import "./components/_zoom-vanilla.css";
-@import "./components/_tom-select.css";
 @import "./components/_ckeditor.css";
 @import "./components/_litepicker.css";
 @import "./components/_full-calendar.css";
 @import "./components/_tabulator.css";
+@import "./components/_vue-multiselect.css";
 @import "./components/_main.css";
+
+
+

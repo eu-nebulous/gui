@@ -86,25 +86,15 @@
 
                 <div v-if="metric.level === 'components' && metric.components" class="flex flex-col">
                   <Label>Components</Label>
-                  <TomSelect
+                  <VueSelect
                     v-model="metric.components"
                     class="w-full"
-                    multiple
+                    :is-multi="true"
                     :class="{
                       'input--invalid': v.components?.$error || hasBackendError(`metrics[${index}].components`)
                     }"
-                  >
-                    <template v-if="componentList.length">
-                      <option
-                        v-for="(option, componentOptionIndex) in componentList"
-                        :key="componentOptionIndex"
-                        :value="option.value"
-                      >
-                        {{ option.label }}
-                      </option>
-                    </template>
-                    <template v-else> <option>No keys available</option> </template>
-                  </TomSelect>
+                    :options="componentList"
+                  />
                 </div>
 
                 <div class="flex flex-col">
@@ -328,9 +318,7 @@ import ArrowDown from "@/assets/svg/ArrowDown.svg"
 import Textarea from "@/base-components/Form/FormTextarea.vue"
 import { IMetricComposite, IMetricRaw } from "@/interfaces/metrics.interface.ts"
 import { useMetrics } from "@/components/Application/Metrics/MetricsComposable.ts"
-import TomSelect from "@/base-components/TomSelect/TomSelect.vue"
-import MonacoEditor from "@/base-components/MonacoEditor/MonacoEditor.vue"
-
+import VueSelect from "vue3-select-component";
 const pathsWithError = inject<Ref<Array<string>>>("pathsWithError")
 
 const emit = defineEmits<{

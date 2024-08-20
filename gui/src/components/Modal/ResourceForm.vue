@@ -1,178 +1,172 @@
 <template>
   <form>
-  <Dialog.Description class="grid grid-cols-3 gap-4 p-4" :class=" availableInPlatform(['OPENSTACK','AWS']) ?  'grid-cols-3' : 'grid-cols-2' "
-  >
-    <div class="col-span-3 p-0">
-      <div class="mb-3">
-        <Label>Name</Label>
-        <Input
-            type="text"
-            v-model="resourceData.title"
-            :class="{
+    <Dialog.Description class="grid grid-cols-3 gap-4 p-4"
+                        :class=" availableInPlatform(['OPENSTACK','AWS']) ?  'grid-cols-3' : 'grid-cols-2' "
+    >
+      <div class="col-span-3 p-0">
+        <div class="mb-3">
+          <Label>Name</Label>
+          <Input
+              type="text"
+              v-model="resourceData.title"
+              :class="{
             'input--invalid': v$.title.$error
           }"
-        />
-      </div>
-      <div class="flex flex-col">
-        <Label>Platform</Label>
-        <Select
-            v-model="resourceData.platform.uuid"
-            :class="{
+          />
+        </div>
+        <div class="flex flex-col">
+          <Label>Platform</Label>
+          <Select
+              v-model="resourceData.platform.uuid"
+              :class="{
             'input--invalid': v$.platform.$error
           }"
+          >
+            <option v-for="(platform, index) in platformsOptions" :key="index" :value="platform.uuid">
+              {{ platform.title }}
+            </option>
+          </Select>
+        </div>
+        <div v-if="availableInPlatform(['OPENSTACK','AWS'])"
+             class="flex flex-col"
         >
-          <option v-for="(platform, index) in platformsOptions" :key="index" :value="platform.uuid">
-            {{ platform.title }}
-          </option>
-        </Select>
-      </div>
-      <div v-if="availableInPlatform(['OPENSTACK','AWS'])"
-           class="flex flex-col"
-      >
-        <div class="mt-4 mb-3">
-          <Label>Regions</Label>
-          <div               v-if="availableInPlatform(['AWS'])"
-          >
-
-          <TomSelect
-              v-model="resourceData.regions"
-              class="w-full"
-              multiple
-          >
-            <template v-if="availableRegions['AWS'].length">
-              <option
-                  v-for="(option, componentOptionIndex) in availableRegions['AWS']"
-                  :key="componentOptionIndex"
-                  :value="option.region"
-              >
-                {{ option.region }} ({{option.region_name}})
-              </option>
-            </template>
-          </TomSelect>
+          <div class="mt-4 mb-3">
+            <Label>Regions</Label>
+            <div v-if="availableInPlatform(['AWS'])"
+            >
+              <VueMultiselect
+                  v-model="resourceData.regions"
+                  :close-on-select="true"
+                  :clear-on-select="false"
+                  :multiple="true"
+                  placeholder="Select Region"
+                  label="region_name"
+                  track-by="region"
+                  :options="availableRegions['AWS']">
+              </VueMultiselect>
+            </div>
+            <Input type="text"
+                   v-if="availableInPlatform(['OPENSTACK'])"
+                   v-model="resourceData.regions"/>
           </div>
-          <Input type="text"
-                 v-if="availableInPlatform(['OPENSTACK'])"
-                 v-model="resourceData.regions"/>
         </div>
       </div>
-    </div>
-    <div class="flex flex-col">
-      <h3 class="font-bold text-lg mb-2">General</h3>
+      <div class="flex flex-col">
+        <h3 class="font-bold text-lg mb-2">General</h3>
 
-      <div class="flex flex-col">
-        <Label>Default Network</Label>
-        <Input
-            type="text"
-            v-model="resourceData.defaultNetwork"
-        />
-      </div>
-      <div class="flex flex-col">
-        <Label>Subnet</Label>
-        <Input
-            type="text"
-            v-model="resourceData.subnet"
-        />
-      </div>
+        <div class="flex flex-col">
+          <Label>Default Network</Label>
+          <Input
+              type="text"
+              v-model="resourceData.defaultNetwork"
+          />
+        </div>
+        <div class="flex flex-col">
+          <Label>Subnet</Label>
+          <Input
+              type="text"
+              v-model="resourceData.subnet"
+          />
+        </div>
 
-      <div class="flex flex-col">
-        <Label>Endpoint</Label>
-        <Input
-            type="text"
-            v-model="resourceData.endpoint"
-        />
-      </div>
+        <div class="flex flex-col">
+          <Label>Endpoint</Label>
+          <Input
+              type="text"
+              v-model="resourceData.endpoint"
+          />
+        </div>
 
-      <div class="flex flex-col">
-        <Label>Identity Version</Label>
-        <Input
-            type="text"
-            v-model="resourceData.identityVersion"
-        />
-      </div>
-      <div class="flex flex-col">
-        <Label>Security Group</Label>
-        <Input
-            type="text"
-            v-model="resourceData.securityGroup"
-        />
-      </div>
+        <div class="flex flex-col">
+          <Label>Identity Version</Label>
+          <Input
+              type="text"
+              v-model="resourceData.identityVersion"
+          />
+        </div>
+        <div class="flex flex-col">
+          <Label>Security Group</Label>
+          <Input
+              type="text"
+              v-model="resourceData.securityGroup"
+          />
+        </div>
 
-    </div>
-    <div class="flex flex-col">
-      <h3 class="font-bold text-lg mb-2">Credentials</h3>
-      <div class="flex flex-col">
-        <Label>Username</Label>
-        <Input
-            type="text"
-            v-model="resourceData.credentials.user"
-        />
       </div>
       <div class="flex flex-col">
-        <Label>Secret</Label>
-        <Input
-            type="text"
-            v-model="resourceData.credentials.secret"
-        />
-      </div>
+        <h3 class="font-bold text-lg mb-2">Credentials</h3>
+        <div class="flex flex-col">
+          <Label>Username</Label>
+          <Input
+              type="text"
+              v-model="resourceData.credentials.user"
+          />
+        </div>
+        <div class="flex flex-col">
+          <Label>Secret</Label>
+          <Input
+              type="text"
+              v-model="resourceData.credentials.secret"
+          />
+        </div>
 
+        <div class="flex flex-col">
+          <Label>Domain</Label>
+          <Input
+              type="text"
+              v-model="resourceData.credentials.domain"
+          />
+        </div>
+
+
+      </div>
       <div class="flex flex-col">
-        <Label>Domain</Label>
-        <Input
-            type="text"
-            v-model="resourceData.credentials.domain"
-        />
+
+        <h3 class="font-bold text-lg mb-2"
+            v-if="availableInPlatform(['OPENSTACK','AWS'])"
+        >SSH Credentials</h3>
+
+
+        <div class="flex flex-col"
+             v-if="availableInPlatform(['OPENSTACK','AWS'])"
+        >
+          <Label>Username</Label>
+          <Input
+              type="text"
+              v-model="resourceData.sshCredentials.username"
+
+          />
+        </div>
+
+        <div class="flex flex-col"
+             v-if="availableInPlatform(['OPENSTACK','AWS'])"
+        >
+          <Label>Key Pair Name</Label>
+          <Input
+              autocomplete="false"
+              type="password"
+              v-model="resourceData.sshCredentials.keyPairName"
+          />
+        </div>
+
+        <div class="flex flex-col"
+             v-if="availableInPlatform(['OPENSTACK','AWS'])"
+        >
+          <Label>Key Private Key</Label>
+          <Input
+              autocomplete="false"
+              type="password"
+              v-model="resourceData.sshCredentials.privateKey"
+          />
+        </div>
+
       </div>
-
-
-    </div>
-    <div class="flex flex-col">
-
-      <h3 class="font-bold text-lg mb-2"
-          v-if="availableInPlatform(['OPENSTACK','AWS'])"
-      >SSH Credentials</h3>
-
-
-      <div class="flex flex-col"
-           v-if="availableInPlatform(['OPENSTACK','AWS'])"
-      >
-        <Label>Username</Label>
-        <Input
-            type="text"
-            v-model="resourceData.sshCredentials.username"
-
-        />
-      </div>
-
-      <div class="flex flex-col"
-           v-if="availableInPlatform(['OPENSTACK','AWS'])"
-      >
-        <Label>Key Pair Name</Label>
-        <Input
-            autocomplete="false"
-            type="password"
-            v-model="resourceData.sshCredentials.keyPairName"
-        />
-      </div>
-
-      <div class="flex flex-col"
-           v-if="availableInPlatform(['OPENSTACK','AWS'])"
-      >
-        <Label>Key Private Key</Label>
-        <Input
-            autocomplete="false"
-            type="password"
-            v-model="resourceData.sshCredentials.privateKey"
-        />
-      </div>
-
-    </div>
-  </Dialog.Description>
+    </Dialog.Description>
   </form>
 </template>
 <script setup lang="ts">
-import { reactive, ref } from "vue"
-import {FormTextarea} from "@/base-components/Form";
-import { Dialog } from "@/base-components/Headless"
+import {computed, watch, reactive, ref} from "vue"
+import {Dialog} from "@/base-components/Headless"
 import Input from "../../base-components/Form/FormInput.vue";
 import Label from "../../base-components/Form/FormLabel.vue";
 import Select from "../../base-components/Form/FormSelect.vue";
@@ -181,16 +175,17 @@ import {IPlatform} from "@/interfaces/platform.interface.ts";
 import {useResourceStore} from "@/store/modules/resources.ts";
 import {IResourcePayload} from "@/types/resource.ts";
 import {useVuelidate} from "@vuelidate/core";
-import TomSelect from "@/base-components/TomSelect";
+import VueMultiselect from "vue-multiselect";
+import {IRegion, IRegions} from "@/interfaces/resources.interface.ts";
 
 const resourceStore = useResourceStore()
 
-const props = defineProps(['resourceData','rules'])
+const props = defineProps(['resourceData', 'rules'])
 
 const resourceData = ref<IResourcePayload>(props.resourceData)
-console.log(resourceData)
-const availableRegions = {
-  'AWS':[
+
+const availableRegions:IRegions = {
+  'AWS': [
     {
       "region_name": "US East (Ohio)",
       "region": "us-east-2",
@@ -485,19 +480,19 @@ const availableRegions = {
 const rules = ref<IResourcePayload>(props.rules)
 
 const $externalResults = reactive({})
-const v$ = useVuelidate(rules.value, resourceData.value, { $externalResults })
+const v$ = useVuelidate(rules.value, resourceData.value, {$externalResults})
 
 
 const platformsOptions = ref<Array<IPlatform>>([])
-const availableInPlatform = (platforms:Array<string>): boolean => {
+const availableInPlatform = (platforms: Array<string>): boolean => {
 
-  if(!platformsOptions.value){
+  if (!platformsOptions.value) {
     return false
   }
 
-  const to_uuid:Array<string> = []
-  _.each(platformsOptions.value, (k)=>{
-    if(platforms.includes(k.title)){
+  const to_uuid: Array<string> = []
+  _.each(platformsOptions.value, (k) => {
+    if (platforms.includes(k.title)) {
       to_uuid.push(k.uuid)
     }
   })
@@ -507,10 +502,9 @@ const getPlatforms = async () => {
   console.log(resourceStore)
   const p = await resourceStore.getPlatforms()
   console.log(p)
-  platformsOptions.value =p
+  platformsOptions.value = p
 }
 getPlatforms()
-
 
 
 </script>
