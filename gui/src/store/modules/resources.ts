@@ -26,7 +26,14 @@ export const useResourceStore = defineStore("resource", {
     },
     async getAllResources(): Promise<IPagination<IResource>> {
       this.platforms = await this.getPlatforms()
-      this.resources = await resourceService.getAllResources()
+      let resources = await resourceService.getAllResources()
+
+      resources.results.forEach((r)=>{
+        if(!r.regions){
+          r.regions = ''
+        }
+      })
+      this.resources = resources
       return this.resources
     },
     async getAllNodeCandidate(uuid:string): Promise<Array<INodeCandidate>> {

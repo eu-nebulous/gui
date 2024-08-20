@@ -33,6 +33,7 @@ const resourceData = reactive<IResourcePayload>({
   platform: {"uuid":'','title':''} as IPlatform,
   _platform: [{"uuid":'','title':''} as IPlatform], // TODO Remove this
   securityGroup:"",
+  regions:"",
   subnet:"",
   endpoint:"",
   identityVersion:"",

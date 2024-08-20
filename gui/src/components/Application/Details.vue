@@ -129,7 +129,7 @@
                             v-model="env.name"
                             type="text"
                             :class="{
-                              'input--invalid': v.name?.$error || hasBackendError(`env[${index}].name`)
+                              'input--invalid': v.name?.$error || hasBackendError(`environmentVariables[${index}].name`)
                             }"
                           />
                         </div>
@@ -142,7 +142,7 @@
                             v-model="env.value"
                             :type="env.secret ==true ? 'password' : 'text' "
                             :class="{
-                              'input--invalid': v.value?.$error || hasBackendError(`env[${index}].value`)
+                              'input--invalid': v.value?.$error || hasBackendError(`environmentVariables[${index}].value`)
                             }"
                           />
                         </div>
@@ -150,7 +150,11 @@
                     </Table.Td>
                     <Table.Td class="w-1/6">
                       <FormSwitch class="ml-auto w-auto">
-                        <FormSwitch.Input id="env-{{index}}-secret" v-model="env.secret" type="checkbox" />
+                        <FormSwitch.Input id="env-{{String(index)}}-secret" v-model="env.secret" type="checkbox"
+                            :class="{
+                              'input--invalid': v.value?.$error || hasBackendError(`environmentVariables[${index}].secret`)
+                            }"
+                        />
                       </FormSwitch>
                     </Table.Td>
                     <Table.Td class="w-1/6">
