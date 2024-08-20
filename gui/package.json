@@ -1,7 +1,7 @@
 {
-  "name": "enigma-nebulous",
+  "name": "nebulous-gui",
   "private": true,
-  "version": "0.0.0",
+  "version": "1.0.0",
   "engines": {
     "node": "v20.13.1"
   },
