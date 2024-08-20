@@ -42,6 +42,22 @@ export interface IAppResource {
 
 
 
+export interface IRegion {
+  region_name: string
+  region: string
+  endpoints: any
+  protocol: any
+}
+
+
+export interface IRegions {
+  [key: string]: Array<IRegion>
+}
+
+
+
+
+
 export interface INodeCandidate {
   id: number
   region: string

@@ -111,25 +111,17 @@
 
                       <div v-if="metric.level === 'components' && metric.components" class="flex flex-col">
                         <Label>Components</Label>
-                        <TomSelect
-                          v-model="metric.components"
-                          class="w-full"
-                          multiple
-                          :class="{
+
+                        <VueSelect
+                            v-model="metric.components"
+                            class="w-full"
+                            :is-multi="true"
+                            :class="{
                             'input--invalid': v.components?.$error || hasBackendError(`metrics[${index}].components`)
-                          }"
-                        >
-                          <template v-if="componentList.length">
-                            <option
-                              v-for="(option, componentOptionIndex) in componentList"
-                              :key="componentOptionIndex"
-                              :value="option.value"
-                            >
-                              {{ option.label }}
-                            </option>
-                          </template>
-                          <template v-else> <option>No keys available</option> </template>
-                        </TomSelect>
+                            }"
+                            :options="componentList"
+                        />
+
                       </div>
 
                     </div>
@@ -306,25 +298,16 @@
 
                       <div v-if="metric.level === 'components' && metric.components" class="flex flex-col">
                         <Label>Components</Label>
-                        <TomSelect
+                        <VueSelect
                             v-model="metric.components"
+                            :is-multi="true"
                             class="w-full"
-                            multiple
                             :class="{
                             'input--invalid': v.components?.$error || hasBackendError(`metrics[${index}].components`)
-                          }"
-                        >
-                          <template v-if="componentList.length">
-                            <option
-                                v-for="(option, componentOptionIndex) in componentList"
-                                :key="componentOptionIndex"
-                                :value="option.value"
-                            >
-                              {{ option.label }}
-                            </option>
-                          </template>
-                          <template v-else> <option>No keys available</option> </template>
-                        </TomSelect>
+                            }"
+                            :options="componentList"
+                        />
+
                       </div>
                     </div>
 
@@ -389,13 +372,13 @@
 </template>
 
 <script setup lang="ts">
-import { computed, Ref, inject, ref } from "vue"
-import { useMetrics } from "@/components/Application/Metrics/MetricsComposable.ts"
-import { Disclosure } from "@/base-components/Headless"
-import { ValidateEach } from "@vuelidate/components"
-import { FormCheck } from "@/base-components/Form"
-import { IMetricComposite, IMetricRaw } from "@/interfaces/metrics.interface.ts"
-import { UNIT_TIME_OPTIONS, BEHAVIOR_OPTIONS, BEHAVIOR_OPTIONS_INPUT ,BEHAVIOR_OPTIONS_OUTPUT} from "@/constants"
+import {computed, inject, Ref, ref} from "vue"
+import {useMetrics} from "@/components/Application/Metrics/MetricsComposable.ts"
+import {Disclosure} from "@/base-components/Headless"
+import {ValidateEach} from "@vuelidate/components"
+import {FormCheck} from "@/base-components/Form"
+import {IMetricComposite, IMetricRaw} from "@/interfaces/metrics.interface.ts"
+import {BEHAVIOR_OPTIONS, BEHAVIOR_OPTIONS_INPUT, BEHAVIOR_OPTIONS_OUTPUT, UNIT_TIME_OPTIONS} from "@/constants"
 import Select from "@/base-components/Form/FormSelect.vue"
 import Label from "@/base-components/Form/FormLabel.vue"
 import Input from "@/base-components/Form/FormInput.vue"
@@ -403,7 +386,7 @@ import Lucide from "@/base-components/Lucide/Lucide.vue"
 import ArrowDown from "@/assets/svg/ArrowDown.svg"
 import Table from "@/base-components/Table"
 import MonacoEditor from "@/base-components/MonacoEditor/MonacoEditor.vue"
-import TomSelect from "@/base-components/TomSelect/TomSelect.vue"
+import VueSelect from "vue3-select-component";
 
 const pathsWithError = inject<Ref<Array<string>>>("pathsWithError")
 

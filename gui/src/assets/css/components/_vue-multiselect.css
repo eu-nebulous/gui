@@ -1,0 +1,78 @@
+.dark{
+
+    .multiselect,
+    .multiselect__input,
+    .multiselect__single {
+        font-family: inherit;
+        font-size: inherit;
+    }
+
+    .multiselect {
+        color: inherit;
+    }
+
+    .multiselect__content-wrapper {
+        background: theme('colors.darkmode.700');
+
+    }
+
+    .multiselect--disabled {
+        background: theme('colors.darkmode.700');
+    }
+
+    .multiselect__tag{
+        color:inherit;
+        background: theme('colors.darkmode.600');
+    }
+
+    .multiselect__tags {
+        background: theme('colors.darkmode.800');
+        border-radius: theme('borderRadius.DEFAULT');
+        font-size:inherit;
+
+    }
+    .multiselect__tag-icon::after {
+        color: theme('colors.slate.500');
+    }
+
+    .multiselect__tag-icon:focus::after,
+    .multiselect__tag-icon:hover::after {
+        color: white;
+    }
+
+    .multiselect__option--highlight {
+        background:theme('colors.slate.500');
+        outline: none;
+        color: white;
+    }
+
+    .multiselect__option--highlight::after {
+        content: attr(data-select);
+        background:theme('colors.slate.500');
+        color: white;
+    }
+
+
+    .multiselect__option--selected {
+        background: theme('colors.slate.700');
+        color: inherit;
+        font-weight: bold;
+    }
+
+    .multiselect__input::placeholder {
+        color: theme("colors.slate.500");
+    }
+
+    .multiselect__input,
+    .multiselect__single{
+        background: theme('colors.darkmode.700');
+    }
+
+
+    .multiselect__spinner::before,
+    .multiselect__spinner::after{
+        border-color: theme('colors.slate.600') transparent transparent;
+    }
+
+}
+
