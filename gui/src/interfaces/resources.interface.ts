@@ -18,6 +18,7 @@ export interface ICredentials{
 export interface IResource {
   uuid: string
   title: string
+  regions: string
   securityGroup: string
   subnet: string
   endpoint: string
@@ -35,6 +36,7 @@ export interface IAppResource {
   uuid: string
   title: string
   platform: string
+  regions: string
   enabled: boolean
 }
 

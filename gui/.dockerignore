@@ -1,1 +1,6 @@
-Dockerfile
+**/node_modules
+**/dist
+/gerrit
+/licenses
+.env*
+!.env.docker
