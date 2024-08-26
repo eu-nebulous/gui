@@ -127,9 +127,9 @@
                       <div class="flex flex-col">
                         <div class="flex space-x-4">
                           <Input
-                            v-model="env.value"
-                            :type="env.secret ==true ? 'password' : 'text' "
-                            :class="{
+                              v-model="env.value"
+                              :type="env.secret ? 'password' : 'text'"
+                              :class="{
                               'input--invalid': v.value?.$error || hasBackendError(`environmentVariables[${index}].value`)
                             }"
                           />
@@ -210,9 +210,9 @@ const environmentVariablesCollectionRules = {
 }
 
 const state = reactive({
-  yamlValue: ref<string>(props.payload.content),
-  variables: ref<Array<IVariable>>(props.payload.variables),
-  environmentVariables: ref<Array<IEnvironment>>(props.payload.environmentVariables)
+  yamlValue: props.payload.content,
+  variables: props.payload.variables,
+  environmentVariables: props.payload.environmentVariables
 })
 
 const autocompleteOptions = ref<Array<{ label: string; value: string }>>([])
@@ -234,7 +234,7 @@ const removeVariable = (index: number) => {
 
 const addEnvironment = () => {
   console.log("Adding environment",state)
-  state.environmentVariables.push({ name: "", value:"", secret:true })
+  state.environmentVariables.push({ name: "", value: "", secret: false })
 }
 
 const removeEnvironment = (index: number) => {
@@ -251,6 +251,7 @@ queryParsedOptionsList()
 
 defineExpose({
   variables: computed(() => state.variables),
+  environmentVariables: computed(() => state.environmentVariables),
   content: computed(() => state.yamlValue),
   componentV$: computed(() => v$)
 })
