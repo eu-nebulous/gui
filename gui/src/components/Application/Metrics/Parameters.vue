@@ -63,7 +63,7 @@ const localParameters = computed(() => props.parameters)
 
 const parameterCollectionRules = {
   name: { required },
-  template: { required }
+  template: {}
 }
 
 const addParameter = () => {
