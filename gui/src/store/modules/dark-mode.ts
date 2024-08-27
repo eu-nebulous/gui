@@ -10,17 +10,18 @@ export const useDarkModeStore = defineStore("darkMode", {
   }),
   getters: {
     darkMode(state) {
-      /* if (localStorage.getItem("darkMode") === null) {
-        localStorage.setItem("darkMode", "false")
-      }*/
+      console.log("State", state);
+      if (localStorage.getItem("darkMode") === null) {
+        localStorage.setItem("darkMode", "true")
+      }
 
-      return state.darkModeValue
+      return true
     }
   },
   actions: {
     setDarkMode(darkMode: boolean) {
-      // localStorage.setItem("darkMode", darkMode.toString())
-      this.darkModeValue = darkMode
+      console.log("State", darkMode);
+      localStorage.setItem("darkMode", darkMode.toString())
     }
   }
 })

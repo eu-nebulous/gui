@@ -33,12 +33,7 @@
         <Breadcrumb.Link to="/">Application</Breadcrumb.Link>
         <Breadcrumb.Link to="/" :active="true"> Dashboard </Breadcrumb.Link>
       </Breadcrumb>
-      <!-- END: Breadcrumb -->
-      <!-- BEGIN: DARK -->
       <DebugInfo class="mr-4" />
-      <DarkModeSwitcher class="mr-4" />
-      <!-- END: DARK -->
-      <!-- BEGIN: Account Menu -->
       <Menu>
         <Menu.Button
           class="flex items-center justify-center bg-blue-400 w-8 h-8 overflow-hidden rounded-full shadow-lg image-fit zoom-in intro-x uppercase"
@@ -68,19 +63,15 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ComputedRef, ref } from "vue"
-import { useRouter } from "vue-router"
-import { useUserStore } from "@/store/modules/user.ts"
-import { TransitionRoot } from "@headlessui/vue"
-import _ from "lodash"
-import fakerData from "@/utils/faker.ts"
-import { IUser } from "@/interfaces/user.interface.ts"
+import {computed, ComputedRef, ref} from "vue"
+import {useRouter} from "vue-router"
+import {useUserStore} from "@/store/modules/user.ts"
+import {IUser} from "@/interfaces/user.interface.ts"
 import Lucide from "@/base-components/Lucide"
 import DarkModeSwitcher from "@/components/DarkModeSwitcher"
 import Breadcrumb from "@/base-components/Breadcrumb"
 import Logo from "@/base-components/Logo"
-import { FormInput } from "@/base-components/Form"
-import { Menu } from "@/base-components/Headless"
+import {Menu} from "@/base-components/Headless"
 import DebugInfo from "@/components/DebugInfo/DebugInfo.vue";
 
 const router = useRouter()
