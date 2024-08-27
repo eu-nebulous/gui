@@ -21,14 +21,10 @@
       <div v-if="v$.password.$error" class="text-sm text-danger">{{ v$.password.$errors[0].$message }}</div>
     </div>
     <Button variant="primary" type="submit" class="w-full"> Login</Button>
-    <!-- <p class="text-right">
-        <a class="text-blue-600 text-sm font-light hover:underline"> Forgot Password? </a>
-      </p> -->
-
-    <div class="text-slate-200 dark:text-slate-800 text-center">
+    <div class="text-slate-200 dark:text-darkmode-500 text-center">
       {{ environment }} | {{ build_id }} | {{ context }}
     </div>
-    <div class="text-white dark:text-slate-800 text-center">
+    <div class="text-white dark:text-darkmode-500 text-center">
       {{ backend }}
     </div>
 
@@ -50,8 +46,11 @@ import { ICredentials } from "@/interfaces/user.interface.ts"
 const userStore = useUserStore()
 const backend = import.meta.env.VITE_API_URL
 const environment = import.meta.env.NODE_VERSION
-const build_id = import.meta.env.BUILD_ID
-const context = import.meta.env.CONTEXT
+const build_id = import.meta.env.VITE_CONTEXT
+const context = import.meta.env.VITE_BUILD_ID
+
+console.log(import.meta)
+
 const form = reactive<ICredentials>({
   username: "",
   password: ""

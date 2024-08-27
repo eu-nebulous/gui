@@ -23,7 +23,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch, Ref } from "vue"
+import {ref, watch, Ref, onMounted} from "vue"
 import { RouteLocationNormalizedLoaded, useRoute } from "vue-router"
 import { useUIStore } from "@/store/modules/ui.ts"
 import Header from "@/components/Header"
@@ -46,6 +46,4 @@ watch(
   },
   { deep: true }
 )
-
-
 </script>
