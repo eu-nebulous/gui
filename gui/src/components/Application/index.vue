@@ -22,15 +22,15 @@
 </template>
 
 <script setup lang="ts">
-import { watchEffect, shallowRef, reactive, ref, computed, provide, Ref } from "vue"
+import {computed, provide, reactive, ref, Ref, shallowRef, watchEffect} from "vue"
 import _ from "lodash"
-import { v4 as uuid } from "uuid"
-import { IMetricComposite, IMetricRaw } from "@/interfaces/metrics.interface.ts"
-import { IVariable } from "@/interfaces/variables.interface.ts"
-import { IAppResource } from "@/interfaces/resources.interface.ts"
-import { ISLOCompositeExpression } from "@/interfaces/sloviolation.interface.ts"
-import { IUtilityFunction } from "@/interfaces/utilityFunctions.interface.ts"
-import { IApplication } from "@/interfaces/application.interface.ts"
+import {v4 as uuid} from "uuid"
+import {IMetricComposite, IMetricRaw} from "@/interfaces/metrics.interface.ts"
+import {IVariable} from "@/interfaces/variables.interface.ts"
+import {IAppResource} from "@/interfaces/resources.interface.ts"
+import {ISLOCompositeExpression} from "@/interfaces/sloviolation.interface.ts"
+import {IUtilityFunction} from "@/interfaces/utilityFunctions.interface.ts"
+import {IApplication} from "@/interfaces/application.interface.ts"
 import MultiStepsProvider from "@/base-components/MultiStepsProvider/index.vue"
 import STAGES from "@/components/Application/stages.ts"
 import Details from "@/components/Application/Details.vue"
@@ -38,13 +38,13 @@ import Resources from "@/components/Application/Resources.vue"
 import Metrics from "@/components/Application/Metrics/index.vue"
 import ExpressionEditor from "@/components/Application/ExpressionEditor.vue"
 import Input from "@/base-components/Form/FormInput.vue"
-import { extractValidationError } from "@/utils/helper.ts"
-import { useVuelidate } from "@vuelidate/core"
-import { required } from "@vuelidate/validators"
-import { useApplicationStore } from "@/store/modules/application.ts"
-import { ITemplate } from "@/interfaces/template.interface.ts"
-import { IParameter } from "@/interfaces/parameter.interface.ts"
-import { AxiosError } from "axios"
+import {extractValidationError} from "@/utils/helper.ts"
+import {useVuelidate} from "@vuelidate/core"
+import {required} from "@vuelidate/validators"
+import {useApplicationStore} from "@/store/modules/application.ts"
+import {ITemplate} from "@/interfaces/template.interface.ts"
+import {IParameter} from "@/interfaces/parameter.interface.ts"
+import {AxiosError} from "axios"
 import {IEnvironment} from "@/interfaces/environment.interface.ts";
 
 interface ApplicationProps {
@@ -168,7 +168,7 @@ const updateStagesData = () => {
           await Promise.all([getComponentList(), applicationStore.validateApplication(stepPayload)]);
           pathsWithError.value = [];
           responseErrorMessages.value = [];
-        } catch (error) {
+        } catch (error: any) {
           handleError(error);
         } finally {
           next();
@@ -196,7 +196,7 @@ const updateStagesData = () => {
           await applicationStore.validateApplication({ title: applicationData.title, resources: applicationData.resources });
           pathsWithError.value = [];
           responseErrorMessages.value = [];
-        } catch (error) {
+        } catch (error: any) {
           handleError(error);
         } finally {
           next();
@@ -209,7 +209,7 @@ const updateStagesData = () => {
           await applicationStore.validateApplication({ title: applicationData.title, resources: applicationData.resources });
           pathsWithError.value = [];
           responseErrorMessages.value = [];
-        } catch (error) {
+        } catch (error: any) {
           handleError(error);
         } finally {
           prev();
@@ -257,7 +257,7 @@ const updateStagesData = () => {
           });
           pathsWithError.value = [];
           responseErrorMessages.value = [];
-        } catch (error) {
+        } catch (error: any) {
           handleError(error);
         } finally {
           next(); // Always navigate to the next step
@@ -292,7 +292,7 @@ const updateStagesData = () => {
           });
           pathsWithError.value = [];
           responseErrorMessages.value = [];
-        } catch (error) {
+        } catch (error: any) {
           handleError(error);
         } finally {
           prev();
@@ -328,7 +328,7 @@ const updateStagesData = () => {
           });
           pathsWithError.value = [];
           responseErrorMessages.value = [];
-        } catch (error) {
+        } catch (error: any) {
           handleError(error);
         } finally {
           next();
@@ -347,7 +347,7 @@ const updateStagesData = () => {
           });
           pathsWithError.value = [];
           responseErrorMessages.value = [];
-        } catch (error) {
+        } catch (error:  any) {
           handleError(error);
         } finally {
           prev();
