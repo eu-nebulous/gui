@@ -1,8 +1,16 @@
 # Build the Vue app
 FROM node:20 as build-stage
+
+ARG BUILD_ID
+ARG BUILD_CONTEXT
+
 WORKDIR /app
 COPY package*.json ./
 COPY .env.docker ./.env
+
+
+ENV VITE_BUILD_ID=${BUILD_ID}
+ENV VITE_CONTEXT=${BUILD_CONTEXT}
 
 RUN npm install --include-dev
 COPY ./ .

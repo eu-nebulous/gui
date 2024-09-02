@@ -15,4 +15,7 @@ jobs:
     with:
       context: gui
       image-name: gui-builder
+      build-args: |
+        BUILD_ID="${{github.sha}}"
+        BUILD_CONTEXT="${{github.ref_name}}"
     secrets: inherit

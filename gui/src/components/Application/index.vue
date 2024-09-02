@@ -22,15 +22,15 @@
 </template>
 
 <script setup lang="ts">
-import { watchEffect, shallowRef, reactive, ref, computed, provide, Ref } from "vue"
+import {computed, provide, reactive, ref, Ref, shallowRef, watchEffect} from "vue"
 import _ from "lodash"
-import { v4 as uuid } from "uuid"
-import { IMetricComposite, IMetricRaw } from "@/interfaces/metrics.interface.ts"
-import { IVariable } from "@/interfaces/variables.interface.ts"
-import { IAppResource } from "@/interfaces/resources.interface.ts"
-import { ISLOCompositeExpression } from "@/interfaces/sloviolation.interface.ts"
-import { IUtilityFunction } from "@/interfaces/utilityFunctions.interface.ts"
-import { IApplication } from "@/interfaces/application.interface.ts"
+import {v4 as uuid} from "uuid"
+import {IMetricComposite, IMetricRaw} from "@/interfaces/metrics.interface.ts"
+import {IVariable} from "@/interfaces/variables.interface.ts"
+import {IAppResource} from "@/interfaces/resources.interface.ts"
+import {ISLOCompositeExpression} from "@/interfaces/sloviolation.interface.ts"
+import {IUtilityFunction} from "@/interfaces/utilityFunctions.interface.ts"
+import {IApplication} from "@/interfaces/application.interface.ts"
 import MultiStepsProvider from "@/base-components/MultiStepsProvider/index.vue"
 import STAGES from "@/components/Application/stages.ts"
 import Details from "@/components/Application/Details.vue"
@@ -38,13 +38,13 @@ import Resources from "@/components/Application/Resources.vue"
 import Metrics from "@/components/Application/Metrics/index.vue"
 import ExpressionEditor from "@/components/Application/ExpressionEditor.vue"
 import Input from "@/base-components/Form/FormInput.vue"
-import { extractValidationError } from "@/utils/helper.ts"
-import { useVuelidate } from "@vuelidate/core"
-import { required } from "@vuelidate/validators"
-import { useApplicationStore } from "@/store/modules/application.ts"
-import { ITemplate } from "@/interfaces/template.interface.ts"
-import { IParameter } from "@/interfaces/parameter.interface.ts"
-import { AxiosError } from "axios"
+import {extractValidationError} from "@/utils/helper.ts"
+import {useVuelidate} from "@vuelidate/core"
+import {required} from "@vuelidate/validators"
+import {useApplicationStore} from "@/store/modules/application.ts"
+import {ITemplate} from "@/interfaces/template.interface.ts"
+import {IParameter} from "@/interfaces/parameter.interface.ts"
+import {AxiosError} from "axios"
 import {IEnvironment} from "@/interfaces/environment.interface.ts";
 
 interface ApplicationProps {
@@ -164,13 +164,15 @@ const updateStagesData = () => {
           environmentVariables: applicationData.environmentVariables
         }
 
-        return await Promise.all([getComponentList(), applicationStore.validateApplication(stepPayload)])
-          .then(() => {
-            pathsWithError.value = []
-            responseErrorMessages.value = []
-            next()
-          })
-          .catch(handleError)
+        try {
+          await Promise.all([getComponentList(), applicationStore.validateApplication(stepPayload)]);
+          pathsWithError.value = [];
+          responseErrorMessages.value = [];
+        } catch (error: any) {
+          handleError(error);
+        } finally {
+          next();
+        }
       },
       payload: {
         content: applicationData.content,
@@ -190,26 +192,28 @@ const updateStagesData = () => {
       onNextPageClick: async (next: () => void, { resources }: { resources: Array<IAppResource> }) => {
         applicationData.resources = resources
 
-        await applicationStore
-          .validateApplication({ title: applicationData.title, resources: applicationData.resources })
-          .then(() => {
-            pathsWithError.value = []
-            responseErrorMessages.value = []
-            next()
-          })
-          .catch(handleError)
+        try {
+          await applicationStore.validateApplication({ title: applicationData.title, resources: applicationData.resources });
+          pathsWithError.value = [];
+          responseErrorMessages.value = [];
+        } catch (error: any) {
+          handleError(error);
+        } finally {
+          next();
+        }
       },
       onPrevPageClick: async (prev: () => void, { resources }: { resources: Array<IAppResource> }) => {
         applicationData.resources = resources
 
-        await applicationStore
-          .validateApplication({ title: applicationData.title, resources: applicationData.resources })
-          .then(() => {
-            pathsWithError.value = []
-            responseErrorMessages.value = []
-            prev()
-          })
-          .catch(handleError)
+        try {
+          await applicationStore.validateApplication({ title: applicationData.title, resources: applicationData.resources });
+          pathsWithError.value = [];
+          responseErrorMessages.value = [];
+        } catch (error: any) {
+          handleError(error);
+        } finally {
+          prev();
+        }
       },
       payload: {
         appResources: applicationData.resources
@@ -243,20 +247,21 @@ const updateStagesData = () => {
         applicationData.metrics = metrics
         applicationData.sloViolations = sloViolations
 
-        await applicationStore
-          .validateApplication({
+        try {
+          await applicationStore.validateApplication({
             title: applicationData.title,
             templates: applicationData.templates,
             parameters: applicationData.parameters,
             metrics: applicationData.metrics,
-            sloViolations: applicationData.sloViolations
-          })
-          .then(() => {
-            pathsWithError.value = []
-            responseErrorMessages.value = []
-            next()
-          })
-          .catch(handleError)
+            sloViolations: applicationData.sloViolations,
+          });
+          pathsWithError.value = [];
+          responseErrorMessages.value = [];
+        } catch (error: any) {
+          handleError(error);
+        } finally {
+          next(); // Always navigate to the next step
+        }
       },
       onPrevPageClick: async (
         prev: () => void,
@@ -277,20 +282,21 @@ const updateStagesData = () => {
         applicationData.metrics = metrics
         applicationData.sloViolations = sloViolations
 
-        await applicationStore
-          .validateApplication({
+        try {
+          await applicationStore.validateApplication({
             title: applicationData.title,
             templates: applicationData.templates,
             parameters: applicationData.parameters,
             metrics: applicationData.metrics,
-            sloViolations: applicationData.sloViolations
-          })
-          .then(() => {
-            pathsWithError.value = []
-            responseErrorMessages.value = []
-            prev()
-          })
-          .catch(handleError)
+            sloViolations: applicationData.sloViolations,
+          });
+          pathsWithError.value = [];
+          responseErrorMessages.value = [];
+        } catch (error: any) {
+          handleError(error);
+        } finally {
+          prev();
+        }
       },
       payload: {
         componentList: componentList.value,
@@ -315,17 +321,18 @@ const updateStagesData = () => {
       ) => {
         applicationData.utilityFunctions = utilityFunctions
 
-        await applicationStore
-          .validateApplication({
+        try {
+          await applicationStore.validateApplication({
             title: applicationData.title,
-            utilityFunctions: applicationData.utilityFunctions
-          })
-          .then(() => {
-            pathsWithError.value = []
-            responseErrorMessages.value = []
-            next()
-          })
-          .catch(handleError)
+            utilityFunctions: applicationData.utilityFunctions,
+          });
+          pathsWithError.value = [];
+          responseErrorMessages.value = [];
+        } catch (error: any) {
+          handleError(error);
+        } finally {
+          next();
+        }
       },
       onPrevPageClick: async (
         prev: () => void,
@@ -333,17 +340,18 @@ const updateStagesData = () => {
       ) => {
         applicationData.utilityFunctions = utilityFunctions
 
-        await applicationStore
-          .validateApplication({
+        try {
+          await applicationStore.validateApplication({
             title: applicationData.title,
-            utilityFunctions: applicationData.utilityFunctions
-          })
-          .then(() => {
-            pathsWithError.value = []
-            responseErrorMessages.value = []
-            prev()
-          })
-          .catch(handleError)
+            utilityFunctions: applicationData.utilityFunctions,
+          });
+          pathsWithError.value = [];
+          responseErrorMessages.value = [];
+        } catch (error:  any) {
+          handleError(error);
+        } finally {
+          prev();
+        }
       },
       payload: {
         metrics: applicationData.metrics.map((metric) => metric.name),
