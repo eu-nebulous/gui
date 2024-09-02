@@ -164,13 +164,15 @@ const updateStagesData = () => {
           environmentVariables: applicationData.environmentVariables
         }
 
-        return await Promise.all([getComponentList(), applicationStore.validateApplication(stepPayload)])
-          .then(() => {
-            pathsWithError.value = []
-            responseErrorMessages.value = []
-            next()
-          })
-          .catch(handleError)
+        try {
+          await Promise.all([getComponentList(), applicationStore.validateApplication(stepPayload)]);
+          pathsWithError.value = [];
+          responseErrorMessages.value = [];
+        } catch (error) {
+          handleError(error);
+        } finally {
+          next();
+        }
       },
       payload: {
         content: applicationData.content,
@@ -190,26 +192,28 @@ const updateStagesData = () => {
       onNextPageClick: async (next: () => void, { resources }: { resources: Array<IAppResource> }) => {
         applicationData.resources = resources
 
-        await applicationStore
-          .validateApplication({ title: applicationData.title, resources: applicationData.resources })
-          .then(() => {
-            pathsWithError.value = []
-            responseErrorMessages.value = []
-            next()
-          })
-          .catch(handleError)
+        try {
+          await applicationStore.validateApplication({ title: applicationData.title, resources: applicationData.resources });
+          pathsWithError.value = [];
+          responseErrorMessages.value = [];
+        } catch (error) {
+          handleError(error);
+        } finally {
+          next();
+        }
       },
       onPrevPageClick: async (prev: () => void, { resources }: { resources: Array<IAppResource> }) => {
         applicationData.resources = resources
 
-        await applicationStore
-          .validateApplication({ title: applicationData.title, resources: applicationData.resources })
-          .then(() => {
-            pathsWithError.value = []
-            responseErrorMessages.value = []
-            prev()
-          })
-          .catch(handleError)
+        try {
+          await applicationStore.validateApplication({ title: applicationData.title, resources: applicationData.resources });
+          pathsWithError.value = [];
+          responseErrorMessages.value = [];
+        } catch (error) {
+          handleError(error);
+        } finally {
+          prev();
+        }
       },
       payload: {
         appResources: applicationData.resources
@@ -243,20 +247,21 @@ const updateStagesData = () => {
         applicationData.metrics = metrics
         applicationData.sloViolations = sloViolations
 
-        await applicationStore
-          .validateApplication({
+        try {
+          await applicationStore.validateApplication({
             title: applicationData.title,
             templates: applicationData.templates,
             parameters: applicationData.parameters,
             metrics: applicationData.metrics,
-            sloViolations: applicationData.sloViolations
-          })
-          .then(() => {
-            pathsWithError.value = []
-            responseErrorMessages.value = []
-            next()
-          })
-          .catch(handleError)
+            sloViolations: applicationData.sloViolations,
+          });
+          pathsWithError.value = [];
+          responseErrorMessages.value = [];
+        } catch (error) {
+          handleError(error);
+        } finally {
+          next(); // Always navigate to the next step
+        }
       },
       onPrevPageClick: async (
         prev: () => void,
@@ -277,20 +282,21 @@ const updateStagesData = () => {
         applicationData.metrics = metrics
         applicationData.sloViolations = sloViolations
 
-        await applicationStore
-          .validateApplication({
+        try {
+          await applicationStore.validateApplication({
             title: applicationData.title,
             templates: applicationData.templates,
             parameters: applicationData.parameters,
             metrics: applicationData.metrics,
-            sloViolations: applicationData.sloViolations
-          })
-          .then(() => {
-            pathsWithError.value = []
-            responseErrorMessages.value = []
-            prev()
-          })
-          .catch(handleError)
+            sloViolations: applicationData.sloViolations,
+          });
+          pathsWithError.value = [];
+          responseErrorMessages.value = [];
+        } catch (error) {
+          handleError(error);
+        } finally {
+          prev();
+        }
       },
       payload: {
         componentList: componentList.value,
@@ -315,17 +321,18 @@ const updateStagesData = () => {
       ) => {
         applicationData.utilityFunctions = utilityFunctions
 
-        await applicationStore
-          .validateApplication({
+        try {
+          await applicationStore.validateApplication({
             title: applicationData.title,
-            utilityFunctions: applicationData.utilityFunctions
-          })
-          .then(() => {
-            pathsWithError.value = []
-            responseErrorMessages.value = []
-            next()
-          })
-          .catch(handleError)
+            utilityFunctions: applicationData.utilityFunctions,
+          });
+          pathsWithError.value = [];
+          responseErrorMessages.value = [];
+        } catch (error) {
+          handleError(error);
+        } finally {
+          next();
+        }
       },
       onPrevPageClick: async (
         prev: () => void,
@@ -333,17 +340,18 @@ const updateStagesData = () => {
       ) => {
         applicationData.utilityFunctions = utilityFunctions
 
-        await applicationStore
-          .validateApplication({
+        try {
+          await applicationStore.validateApplication({
             title: applicationData.title,
-            utilityFunctions: applicationData.utilityFunctions
-          })
-          .then(() => {
-            pathsWithError.value = []
-            responseErrorMessages.value = []
-            prev()
-          })
-          .catch(handleError)
+            utilityFunctions: applicationData.utilityFunctions,
+          });
+          pathsWithError.value = [];
+          responseErrorMessages.value = [];
+        } catch (error) {
+          handleError(error);
+        } finally {
+          prev();
+        }
       },
       payload: {
         metrics: applicationData.metrics.map((metric) => metric.name),

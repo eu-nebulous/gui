@@ -58,7 +58,7 @@
                     ? 'url(#successGradient)'
                     : 'none'
               "
-              :icon="isStageConnected(stage + 1) ? 'CheckCircle2' : 'Circle'"
+              :icon="hasError ? 'XCircle' : isStageConnected(stage + 1) ? 'CheckCircle2' : 'Circle'"
               class="w-8 h-8"
               :class="[
                 { 'text-danger': hasError },
@@ -196,46 +196,54 @@ const isPrevButtonDisabled = computed(() => {
 const prevButtonTooltip = computed(() => (isPrevButtonDisabled.value ? currentStage.value.prevButtonTooltip : ""))
 
 const toPreviousPage = async ({ rawNavigation }: { rawNavigation?: boolean } = {}) => {
-  const { componentV$, ...data } = currentStageRef.value || {}
-  const isComponentValid = !componentV$ || (await componentV$.value.$validate())
-  const isTitleValid = !props.v$ || (await props.v$.$validate())
-  if (isTitleValid && isComponentValid) {
-    clientErrorMessages.value = []
-    if (rawNavigation) {
-      currentStageName.value = currentStage.value.previous
+  const { componentV$, ...data } = currentStageRef.value || {};
+  const isComponentValid = !componentV$ || (await componentV$.value.$validate());
+  const isTitleValid = !props.v$ || (await props.v$.$validate());
+  try {
+    if (!isTitleValid || !isComponentValid) {
+      clientErrorMessages.value = componentV$.value.$errors.map(
+          (error: ErrorObject) => error.$propertyPath + ": " + error.$message
+      );
     } else {
-      const toPrev = () => (currentStageName.value = currentStage.value.previous)
-      // emits data handler if navigation requires it, here your api call may be implemented
-      await currentStage.value.onPrevPageClick?.(toPrev, data)
+      clientErrorMessages.value = [];
     }
-  } else {
-    // TODO: refactor messages and reinvent way of displaying
-    clientErrorMessages.value = componentV$.value.$errors.map(
-      (error: ErrorObject) => error.$propertyPath + ": " + error.$message
-    )
-  }
-}
+  } catch (error) {
+  } finally {
+      if (rawNavigation) {
+        currentStageName.value = currentStage.value.previous;
+      } else {
+        const toPrev = () => (currentStageName.value = currentStage.value.previous);
+        await currentStage.value.onPrevPageClick?.(toPrev, data);
+      }
+    }
+};
 
-// Navigates to next page only if current stage fields are valid
+
+// Navigates to next page regardless if current stage fields are valid
 const toNextPage = async ({ rawNavigation }: { rawNavigation?: boolean } = {}) => {
-  const { componentV$, ...data } = currentStageRef.value || {}
-  const isComponentValid = !componentV$ || (await componentV$.value.$validate())
-  const isTitleValid = !props.v$ || (await props.v$.$validate())
-  if (isTitleValid && isComponentValid) {
-    clientErrorMessages.value = []
-    if (rawNavigation) {
-      currentStageName.value = currentStage.value.next
+  const { componentV$, ...data } = currentStageRef.value || {};
+  const isComponentValid = !componentV$ || (await componentV$.value.$validate());
+  const isTitleValid = !props.v$ || (await props.v$.$validate());
+
+  try {
+    if (!isTitleValid || !isComponentValid) {
+      clientErrorMessages.value = componentV$.value.$errors.map(
+          (error: ErrorObject) => error.$propertyPath + ": " + error.$message
+      );
     } else {
-      const toNext = () => (currentStageName.value = currentStage.value.next)
-      // emits data handler if navigation requires it, here your api call may be implemented
-      await currentStage.value.onNextPageClick?.(toNext, data)
+      clientErrorMessages.value = [];
     }
-  } else {
-    clientErrorMessages.value = componentV$.value.$errors.map(
-      (error: ErrorObject) => error.$propertyPath + ": " + error.$message
-    )
+  } catch (error) {
+    console.error('Validation error:', error);
+  } finally {
+    if (rawNavigation) {
+      currentStageName.value = currentStage.value.next;
+    } else {
+      const toNext = () => (currentStageName.value = currentStage.value.next);
+      await currentStage.value.onNextPageClick?.(toNext, data);
+    }
   }
-}
+};
 
 const onSaveClick = async () => {
   const { componentV$, ...data } = currentStageRef.value || {}

@@ -15,15 +15,25 @@ const uiStore = useUIStore()
 const router = useRouter()
 
 const createApplication = async (applicationData: IApplication): Promise<IApplication> => {
-  return await applicationStore.validateApplication(applicationData).then(async () => {
+  try {
+    if (!applicationData.title) {
+      throw new Error("Title is required");
+    }
     return await applicationStore.createApplication(applicationData).then((application) => {
       uiStore.setSnackbarMessage({
         message: `Successfully created application ${application.title}`,
         type: SNACKBAR_MESSAGE_TYPES.SUCCESS
-      })
-      router.push({ name: "applications-overview" })
-      return application
-    })
-  })
-}
+      });
+      router.push({ name: "applications-overview" });
+      return application;
+    });
+  } catch (error) {
+    uiStore.setSnackbarMessage({
+      message: `Failed to create application: ${error.message}`,
+      type: SNACKBAR_MESSAGE_TYPES.ERROR
+    });
+    throw error; 
+  }
+};
+
 </script>
