@@ -11,9 +11,6 @@ do
   echo "Setting VITE_CFSB_API_URL_PLACEHOLDER environment variables ${VITE_CFSB_API_URL}"
   sed -i 's|VITE_CFSB_API_URL_PLACEHOLDER|'${VITE_CFSB_API_URL}'|g' $file
 
-  echo "Setting VITE_BUILD_ID_PLACEHOLDER environment variables ${VITE_BUILD_ID}"
-  sed -i 's|VITE_BUILD_ID_PLACEHOLDER|'${VITE_BUILD_ID}'|g' $file
-
   echo "Setting VITE_CONTEXT_PLACEHOLDER environment variables ${VITE_CONTEXT}"
   sed -i 's|VITE_CONTEXT_PLACEHOLDER|'${VITE_CONTEXT}'|g' $file
 
