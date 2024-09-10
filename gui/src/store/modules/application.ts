@@ -58,6 +58,11 @@ export const useApplicationStore = defineStore("application", {
     },
     async invokeYamlComponents(content: string): Promise<Array<string>> {
       return await applicationService.getYamlComponents({ content })
+    },
+    async duplicateApplication(uuid: string): Promise<IApplicationOverview> {
+      const duplicatedApplication: IApplicationOverview = await applicationService.duplicateApplication(uuid)
+      this.applications.results.unshift(duplicatedApplication)
+      return duplicatedApplication
     }
   }
 })

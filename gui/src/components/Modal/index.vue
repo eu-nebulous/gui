@@ -26,6 +26,7 @@ import UserEditing from "@/components/Modal/UserEditing.vue"
 import ResourceCreation from "@/components/Modal/ResourceCreation.vue"
 import ResourceEditing from "@/components/Modal/ResourceEditing.vue"
 import DeleteConfirmation from "@/components/Modal/DeleteConfirmation.vue"
+import DuplicationConfirmation from "@/components/Modal/DuplicationConfirmation.vue"
 import ExitConfirmation from "@/components/Modal/ExitConfirmation.vue"
 
 import Snackbar from "@/components/Snackbar"
@@ -38,6 +39,7 @@ const components: Record<keyof typeof MODAL_WINDOW_NAMES, Component> = {
   [MODAL_WINDOW_NAMES.RESOURCE_CREATION]: ResourceCreation,
   [MODAL_WINDOW_NAMES.RESOURCE_EDITING]: ResourceEditing,
   [MODAL_WINDOW_NAMES.CONFIRM_DELETING_MODAL]: DeleteConfirmation,
+  [MODAL_WINDOW_NAMES.CONFIRM_DUPLICATION_MODAL]: DuplicationConfirmation,
   [MODAL_WINDOW_NAMES.EXIT_MESSAGE_MODAL]: ExitConfirmation
 }
 

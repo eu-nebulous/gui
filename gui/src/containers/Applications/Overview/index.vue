@@ -30,6 +30,7 @@
 
           <Lucide  icon="PlayCircle" class="w-10 text-white" @click="deployApplication(application)" />
           <Lucide v-if="application.status=='draft' || application.status=='ready' || !application.status" icon="Pencil" class="w-10 text-warning" @click="toApplicationEditing(application)" />
+          <Lucide v-if="application.status=='draft' || application.status=='ready' || !application.status" icon="Copy" class="w-10 text-info" @click="duplicateApplication(application)" />
           <Lucide v-if="application.status=='draft' || application.status=='ready' || !application.status" icon="Trash2" class="w-10 text-danger" @click="removeApplication(application.uuid)" />
         </div>
       </div>
@@ -171,5 +172,26 @@ const deployApplication = (application: IApplication) =>{
   applicationStore.deployApplication(application.uuid)
 
 
+}
+const duplicateApplication = (application: IApplication) => {
+  uiStore.setModalWindowState({
+    name: MODAL_WINDOW_NAMES.CONFIRM_DUPLICATION_MODAL,
+    payload: {
+      confirmAction: () => {
+        applicationStore.duplicateApplication(application.uuid).then((newAppUuid: string) => {
+          uiStore.setSnackbarMessage({
+            message: "Successfully duplicated application",
+            type: SNACKBAR_MESSAGE_TYPES.SUCCESS
+          })
+        }).catch(() => {
+          uiStore.setSnackbarMessage({
+            message: "Failed to duplicate application",
+            type: SNACKBAR_MESSAGE_TYPES.ERROR
+          })
+        })
+      },
+      cancelAction: () => {}
+    }
+  })
 }
 </script>
