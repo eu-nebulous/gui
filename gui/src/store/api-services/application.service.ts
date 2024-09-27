@@ -138,6 +138,9 @@ export default {
     async publishPolicies(policies:string): Promise<PolicyResponseType> {
         console.log("Publishing policies" , policies)
         return axios.post(`/api/v1/policies/publish`,{policies:policies}).then(({data}) => data)
+    },
+    async duplicateApplication(uuid: string): Promise<IApplicationOverview> {
+        return axios.post(`/api/v1/application/${uuid}/uuid/duplicate`).then(({data}) => data)
     }
 
 

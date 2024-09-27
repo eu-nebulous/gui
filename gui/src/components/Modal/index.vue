@@ -5,9 +5,16 @@
       <component v-if="openedModalWindow" :is="components[openedModalWindow.name]" :payload="openedModalWindow.payload">
         <template #title>
           <Dialog.Title class="p-8">
-            <p v-if="openedModalWindow.title" class="text-2xl text-center" data-test="modal-title">
-              {{ openedModalWindow.title }}
-            </p>
+            <div>
+              <p v-if="openedModalWindow.title" class="text-2xl text-center mb-2" data-test="modal-title">
+                {{ openedModalWindow.title }}
+              </p>
+              <p class="text-left mt-2">
+                <a href="https://github.com/eu-nebulous/nebulous/wiki/2.1-Managing-cloud-providers" target="_blank" class="text-blue-500 underline">
+                  View instructions
+                </a>
+              </p>
+            </div>
           </Dialog.Title>
         </template>
       </component>
@@ -26,6 +33,7 @@ import UserEditing from "@/components/Modal/UserEditing.vue"
 import ResourceCreation from "@/components/Modal/ResourceCreation.vue"
 import ResourceEditing from "@/components/Modal/ResourceEditing.vue"
 import DeleteConfirmation from "@/components/Modal/DeleteConfirmation.vue"
+import DuplicationConfirmation from "@/components/Modal/DuplicationConfirmation.vue"
 import ExitConfirmation from "@/components/Modal/ExitConfirmation.vue"
 
 import Snackbar from "@/components/Snackbar"
@@ -38,6 +46,7 @@ const components: Record<keyof typeof MODAL_WINDOW_NAMES, Component> = {
   [MODAL_WINDOW_NAMES.RESOURCE_CREATION]: ResourceCreation,
   [MODAL_WINDOW_NAMES.RESOURCE_EDITING]: ResourceEditing,
   [MODAL_WINDOW_NAMES.CONFIRM_DELETING_MODAL]: DeleteConfirmation,
+  [MODAL_WINDOW_NAMES.CONFIRM_DUPLICATION_MODAL]: DuplicationConfirmation,
   [MODAL_WINDOW_NAMES.EXIT_MESSAGE_MODAL]: ExitConfirmation
 }
 

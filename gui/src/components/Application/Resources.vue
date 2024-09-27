@@ -54,18 +54,21 @@ const props = withDefaults(defineProps<ResourcesProps>(), {
 
 const resources = computed<Array<IAppResource>>(() =>
 
-  resourceStore.resources.results.map((resource) => {
-    // prettier-ignore
-    const isEnabled = props.payload.appResources
+    resourceStore.resources.results.map((resource) => {
+      const regions = Array.isArray(resource.regions)
+          ? resource.regions.map((region) => region.region).join(', ')
+          : resource.regions;
+
+      const isEnabled = props.payload.appResources
         .find((appResource: IAppResource) => appResource.uuid === resource.uuid)?.enabled ?? false
-    return {
-      uuid: resource.uuid,
-      title: resource.title,
-      platform: resource.platform.title,
-      regions: resource.regions,
-      enabled: isEnabled
+      return {
+        uuid: resource.uuid,
+        title: resource.title,
+        platform: resource.platform.title,
+        regions: regions,
+        enabled: isEnabled
     }
-  })
+    })
 )
 
 const retrieveAllResources = async () => {
