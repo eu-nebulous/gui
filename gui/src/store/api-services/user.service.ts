@@ -7,7 +7,7 @@ export default {
     return axios.post("/api/v1/@apostrophecms/login/login", payload).then(({ data }) => data)
   },
   async getUserProfileData(): Promise<IUser> {
-    return axios.get("/api/v1/userapi/me").then(({ data }) => data)
+    return axios.get("/api/v1/@apostrophecms/settings").then(({ data }) => data)
   },
   async editUserProfileData(payload: Omit<IUserPayload, "confirmPassword">): Promise<IUser> {
     return axios.patch("/api/v1/userapi/profile-update", payload).then(({ data }) => data)

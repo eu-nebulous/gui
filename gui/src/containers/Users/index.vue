@@ -2,7 +2,8 @@
   <div class="flex flex-col mt-8 intro-y">
     <div class="flex flex-row items-center justify-between mb-4">
       <h2 class="text-base uppercase">Users</h2>
-      <Button variant="primary" class="uppercase" @click="openUserCreationDialogue">Add user </Button>
+      <Button variant="primary" class="uppercase" @click="openUserCreationDialogue">Add user</Button>
+<!--      <Button v-if="isAdmin" variant="primary" class="uppercase" @click="openUserCreationDialogue">Add user</Button>-->
     </div>
 
     <div class="md:box flex-grow overflow-x-auto md:p-5">
@@ -80,9 +81,20 @@ import { usePagination } from "@/composables/usePagination.ts"
 
 const userStore = useUserStore()
 const uiStore = useUIStore()
-
+const isAdmin = ref(false)
 const users = computed<Array<IUser>>(() => userStore.users)
 
+// const retrieveMe = async () => {
+//   const currentUser = await userStore.retrieveUserInfo()
+//   console.log("Current User:", currentUser)
+//
+//   isAdmin.value = currentUser?.role === 'admin'
+//   console.log("Is Admin:", isAdmin.value)
+// }
+//
+// retrieveMe()
+
+// Pagination settings
 const currentPage = ref(1)
 const rowsPerPage = ref(10)
 

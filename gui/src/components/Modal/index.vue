@@ -5,9 +5,16 @@
       <component v-if="openedModalWindow" :is="components[openedModalWindow.name]" :payload="openedModalWindow.payload">
         <template #title>
           <Dialog.Title class="p-8">
-            <p v-if="openedModalWindow.title" class="text-2xl text-center" data-test="modal-title">
-              {{ openedModalWindow.title }}
-            </p>
+            <div>
+              <p v-if="openedModalWindow.title" class="text-2xl text-center mb-2" data-test="modal-title">
+                {{ openedModalWindow.title }}
+              </p>
+              <p class="text-left mt-2">
+                <a href="https://github.com/eu-nebulous/nebulous/wiki/2.1-Managing-cloud-providers" target="_blank" class="text-blue-500 underline">
+                  View instructions
+                </a>
+              </p>
+            </div>
           </Dialog.Title>
         </template>
       </component>

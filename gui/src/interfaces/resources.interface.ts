@@ -18,7 +18,7 @@ export interface ICredentials{
 export interface IResource {
   uuid: string
   title: string
-  regions: string
+  regions: string | Array<IRegion>
   securityGroup: string
   subnet: string
   endpoint: string

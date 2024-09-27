@@ -24,6 +24,7 @@ import {SNACKBAR_MESSAGE_TYPES} from "@/constants"
 import {IResourcePayload} from "@/types/resource.ts"
 import ResourceForm from "@/components/Modal/ResourceForm.vue";
 import {IPlatform} from "@/interfaces/platform.interface.ts";
+import { IRegion } from "@/interfaces/resources.interface.ts"
 
 const resourceStore = useResourceStore()
 const uiStore = useUIStore()
@@ -67,24 +68,30 @@ const closeModal = (skipConfirmation: boolean = false) => {
 
 
 const createResource = async () => {
-  if (!(await v$.value.$validate())){
-    console.log("Failed validation")
-    return
+  // Map regions from objects to string (comma-separated region identifiers)
+  if (Array.isArray(resourceData.regions)) {
+    resourceData.regions = resourceData.regions.map((region: IRegion) => region.region).join(',');
+  }
+
+  if (!(await v$.value.$validate())) {
+    console.log("Failed validation");
+    return;
   }
 
   resourceStore
-    .createResource(resourceData)
-    .then((createdResource) => {
-      closeModal(true)
-      uiStore.setSnackbarMessage({
-        message: `Successfully created resource ${createdResource.title}`,
-        type: SNACKBAR_MESSAGE_TYPES.SUCCESS
+      .createResource(resourceData)
+      .then((createdResource) => {
+        closeModal(true);
+        uiStore.setSnackbarMessage({
+          message: `Successfully created resource ${createdResource.title}`,
+          type: SNACKBAR_MESSAGE_TYPES.SUCCESS
+        });
       })
-    })
-    .catch((error) => {
-      const errors = extractExternalResults(error)
-      Object.assign($externalResults, errors)
-    })
-}
+      .catch((error) => {
+        const errors = extractExternalResults(error);
+        Object.assign($externalResults, errors);
+      });
+};
+
 
 </script>

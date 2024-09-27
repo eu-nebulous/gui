@@ -178,7 +178,8 @@ const duplicateApplication = (application: IApplication) => {
     name: MODAL_WINDOW_NAMES.CONFIRM_DUPLICATION_MODAL,
     payload: {
       confirmAction: () => {
-        applicationStore.duplicateApplication(application.uuid).then((newAppUuid: string) => {
+        applicationStore.duplicateApplication(application.uuid).then((newApp: IApplicationOverview) => {
+          const newAppUuid = newApp.uuid;
           uiStore.setSnackbarMessage({
             message: "Successfully duplicated application",
             type: SNACKBAR_MESSAGE_TYPES.SUCCESS
