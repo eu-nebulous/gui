@@ -141,7 +141,11 @@ export default {
     },
     async duplicateApplication(uuid: string): Promise<IApplicationOverview> {
         return axios.post(`/api/v1/application/${uuid}/uuid/duplicate`).then(({data}) => data)
-    }
-
-
+    },
+    async undeployApplication(uuid: string): Promise<DeployResponseType> {
+        return axios.post(`/api/v1/application/${uuid}/uuid/undeploy`).then(({data}) => data)
+    },
+    async checkApplicationStatus(uuids: string[]): Promise<Array<{ uuid: string; status: string }>> {
+        return axios.post("/api/v1/application/status", { uuids }).then(({ data }) => data)
+    },
 }

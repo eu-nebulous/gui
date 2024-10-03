@@ -7,30 +7,30 @@
       <div class="flex items-center justify-between">
         <div class="block">
           <p
-            class="text-3xl capitalize hover:underline hover:cursor-pointer inline-block  align-middle"
-            @click="toApplicationEditing(application)"
+              class="text-3xl capitalize hover:underline hover:cursor-pointer inline-block  align-middle"
+              @click="toApplicationEditing(application)"
           >
             {{ application.title }}
           </p>
           <p class="cursor-pointer rounded-full px-2 py-2 mx-2 text-xs font-medium text-white inline-block"
-               :class="application.status == 'draft' ? 'bg-gray-700' :
+             :class="application.status == 'draft' ? 'bg-gray-700' :
                           application.status == 'deploying' ? 'bg-primary' :
                             application.status == 'ready' ? 'bg-success' :
-                              application.status =='deployed' ? 'bg-purple-900' : ''"
-               v-if="application.status">
+                              application.status =='deployed' ? 'bg-success' : 
+                                application.status =='undeploying' ? 'bg-red-400' : ''"
+             v-if="application.status">
             {{application.status}}
           </p>
           <p class="cursor-pointer rounded-full px-2 py-2 mx-2 text-xs  dark:bg-darkmode-800 font-medium text-white inline-block"
-               v-if="!application.status">
+             v-if="!application.status">
             unknown
           </p>
-
         </div>
         <div class="flex space-x-2">
-
-          <Lucide  icon="PlayCircle" class="w-10 text-white" @click="deployApplication(application)" />
+          <Lucide v-if="application.status=='draft' || application.status=='ready' || application.status=='deploying'|| !application.status"  icon="PlayCircle" class="w-10 text-white" @click="deployApplication(application)" />
           <Lucide v-if="application.status=='draft' || application.status=='ready' || !application.status" icon="Pencil" class="w-10 text-warning" @click="toApplicationEditing(application)" />
-          <Lucide v-if="application.status=='draft' || application.status=='ready' || !application.status" icon="Copy" class="w-10 text-info" @click="duplicateApplication(application)" />
+          <Lucide v-if="application.status == 'deployed' || application.status == 'ready' || !application.status" icon="Unlock" class="w-10 text-alert"  @click="undeployApplication(application)" />
+          <Lucide v-if="application.status" icon="Copy" class="w-10 text-info" @click="duplicateApplication(application)" />
           <Lucide v-if="application.status=='draft' || application.status=='ready' || !application.status" icon="Trash2" class="w-10 text-danger" @click="removeApplication(application.uuid)" />
         </div>
       </div>
@@ -43,11 +43,11 @@
             <h2 class="text-2xl">{{ application.latency || 0 }} MS</h2>
           </div>
           <BaseChart
-            v-if="application.latency"
-            type="line"
-            :height="120"
-            :width="180"
-            :data="latencyLineChartConfig(application.latency)"
+              v-if="application.latency"
+              type="line"
+              :height="120"
+              :width="180"
+              :data="latencyLineChartConfig(application.latency)"
           />
         </Card>
         <!-- END: LATENCY -->
@@ -58,11 +58,11 @@
             <h2 class="text-2xl">{{ application.reconfigurations || 0 }}</h2>
           </div>
           <BaseChart
-            v-if="application.reconfigurations"
-            type="bar"
-            :height="120"
-            :width="180"
-            :data="reconfigDiagramConfig(application.reconfigurations)"
+              v-if="application.reconfigurations"
+              type="bar"
+              :height="120"
+              :width="180"
+              :data="reconfigDiagramConfig(application.reconfigurations)"
           />
         </Card>
         <!-- END: RECONFIGURATION -->
@@ -74,11 +74,11 @@
           </div>
 
           <BaseChart
-            v-if="application.deployments"
-            type="bar"
-            :height="120"
-            :width="180"
-            :data="deploymentsDiagramConfig(application.deployments)"
+              v-if="application.deployments"
+              type="bar"
+              :height="120"
+              :width="180"
+              :data="deploymentsDiagramConfig(application.deployments)"
           />
         </Card>
         <!-- END: DEPLOYMENTS -->
@@ -90,11 +90,11 @@
           </div>
 
           <BaseChart
-            v-if="application.violations"
-            type="line"
-            :height="120"
-            :width="180"
-            :data="violationsLineChartConfig(application.violations)"
+              v-if="application.violations"
+              type="line"
+              :height="120"
+              :width="180"
+              :data="violationsLineChartConfig(application.violations)"
           />
         </Card>
         <!-- END: SLO VIOLATIONS  -->
@@ -113,7 +113,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from "vue"
+import { ref, computed, onMounted, onBeforeUnmount } from "vue";
 import { useRouter } from "vue-router"
 import { useApplicationStore } from "@/store/modules/application.ts"
 import { useUIStore } from "@/store/modules/ui.ts"
@@ -137,11 +137,6 @@ const uiStore = useUIStore()
 
 const applications = computed<Array<IApplicationOverview>>(() => applicationStore.applications.results)
 
-const retrieveApplications = () => {
-  applicationStore.getAllApplications()
-}
-
-retrieveApplications()
 
 const redirectToAppCreation = () => {
   router.push({ name: "application-creation" })
@@ -195,4 +190,36 @@ const duplicateApplication = (application: IApplication) => {
     }
   })
 }
+
+const undeployApplication = (application: IApplication) => {
+  applicationStore.undeployApplication(application.uuid).then(() => {
+
+    application.status = "undeploying";
+    applicationStore.startPolling();
+
+    uiStore.setSnackbarMessage({
+      message: `You need to manually undeploy resources.`,
+      type: SNACKBAR_MESSAGE_TYPES.INFO
+    });
+    applicationStore.startPolling();
+
+  }).catch(() => {
+    uiStore.setSnackbarMessage({
+      message: `Failed to undeploy application ${application.title}`,
+      type: SNACKBAR_MESSAGE_TYPES.ERROR
+    });
+  });
+};
+
+onMounted(() => {
+  // Retrieve applications and then start polling
+  applicationStore.getAllApplications().then(() => {
+    applicationStore.startPolling();
+  });
+});
+
+onBeforeUnmount(() => {
+  applicationStore.stopPolling();
+});
+
 </script>
