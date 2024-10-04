@@ -1,14 +1,18 @@
 import { defineStore } from "pinia"
 import applicationService from "@/store/api-services/application.service.ts"
 import { IApplication, IApplicationOverview } from "@/interfaces/application.interface.ts"
+import { useUIStore } from "@/store/modules/ui.ts"; // Import the UI store
+import { SNACKBAR_MESSAGE_TYPES } from "@/constants";
 
 interface ApplicationState {
   applications: IPagination<IApplicationOverview>
+  pollingTimerId?: number;
 }
 
 export const useApplicationStore = defineStore("application", {
   state: (): ApplicationState => ({
-    applications: { pages: 0, currentPage: 0, results: [] }
+    applications: { pages: 0, currentPage: 0, results: [] },
+    pollingTimerId: undefined,
   }),
   actions: {
     async validateApplication(payload: Partial<IApplication>): Promise<boolean> {
@@ -63,6 +67,87 @@ export const useApplicationStore = defineStore("application", {
       const duplicatedApplication: IApplicationOverview = await applicationService.duplicateApplication(uuid)
       this.applications.results.unshift(duplicatedApplication)
       return duplicatedApplication
-    }
-  }
-})
+    },
+    async undeployApplication(uuid: string): Promise<string> {
+      return applicationService.undeployApplication(uuid).then((status) => {
+        const app: any = this.applications.results.find((app) => app.uuid === uuid);
+        app.status = status.status;
+        return status.status;
+      });
+    },
+
+    async checkApplicationStatus(uuids: string[]): Promise<void> {
+      console.log("Checking status for applications:", uuids);
+
+      const response = await applicationService.checkApplicationStatus(uuids);
+      console.log("Received status updates:", response);
+
+      response.forEach((updatedApp) => {
+        const appIndex = this.applications.results.findIndex((app) => app.uuid === updatedApp.uuid);
+        if (appIndex !== -1) {
+          const app = this.applications.results[appIndex];
+          const previousStatus = app.status;
+          app.status = updatedApp.status;
+
+          if (previousStatus !== "draft" && updatedApp.status === "draft") {
+            const uiStore = useUIStore();
+            uiStore.setSnackbarMessage({
+              message: `Application ${app.title} has been unlocked successfully`,
+              type: SNACKBAR_MESSAGE_TYPES.SUCCESS,
+            });
+          }
+
+          console.log(`Updated application ${updatedApp.uuid} to status ${updatedApp.status}`);
+        }
+      });
+    },
+
+    startPolling() {
+      console.log("Polling started...");
+
+      const batchSize = 100;
+      let interval = 10000; //10 sec
+      //const maxInterval = 60000;
+
+      const pollStatus = async () => {
+        const deployingApps = this.applications.results.filter(
+            (app) => app.status === "deploying" || app.status === "undeploying"
+        );
+
+        if (deployingApps.length === 0) {
+          console.log("No applications to poll for.");
+          return;
+        }
+
+        console.log(`Polling for ${deployingApps.length} deploying/undeploying applications.`);
+
+        for (let i = 0; i < deployingApps.length; i += batchSize) {
+          const batch = deployingApps.slice(i, i + batchSize);
+          await this.checkApplicationStatus(batch.map((app) => app.uuid));
+        }
+
+        const stillDeploying = this.applications.results.some(
+            (app) => app.status === "deploying" || app.status === "undeploying"
+        );
+
+        if (stillDeploying) {
+          console.log(`Some applications are still deploying. Polling again.`);
+          this.pollingTimerId = window.setTimeout(pollStatus, interval);
+        } else {
+          console.log("All applications have completed. Stopping polling.");
+          this.stopPolling();
+        }
+      };
+
+      pollStatus();
+    },
+
+    stopPolling() {
+      if (this.pollingTimerId) {
+        clearTimeout(this.pollingTimerId);
+        this.pollingTimerId = undefined;
+        console.log("Polling stopped.");
+      }
+    },
+  },
+});
