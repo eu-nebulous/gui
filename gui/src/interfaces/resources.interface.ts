@@ -19,6 +19,7 @@ export interface IResource {
   uuid: string
   title: string
   regions: string | Array<IRegion>
+  excludedInstanceTypes: string | Array<IType>
   securityGroup: string
   subnet: string
   endpoint: string
@@ -54,8 +55,14 @@ export interface IRegions {
   [key: string]: Array<IRegion>
 }
 
+export interface IType {
+  instanceType: string
+}
 
 
+export interface ITypes {
+  [key: string]: Array<IType>
+}
 
 
 export interface INodeCandidate {

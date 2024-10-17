@@ -8,14 +8,15 @@ pnpm-debug.log*
 lerna-debug.log*
 /*.env.*
 node_modules
-dist
+dist/assets
 dist-ssr
 *.local
-
+../.DS_Store
 # Editor directories and files
 .idea
 .vscode
 .DS_Store
+../.idea/
 *.suo
 *.ntvs*
 *.njsproj

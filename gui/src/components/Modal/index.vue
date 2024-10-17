@@ -9,7 +9,7 @@
               <p v-if="openedModalWindow.title" class="text-2xl text-center mb-2" data-test="modal-title">
                 {{ openedModalWindow.title }}
               </p>
-              <p class="text-left mt-2">
+              <p v-if="showInstructionsLink" class="text-left mt-2">
                 <a href="https://github.com/eu-nebulous/nebulous/wiki/2.1-Managing-cloud-providers" target="_blank" class="text-blue-500 underline">
                   View instructions
                 </a>
@@ -52,6 +52,12 @@ const components: Record<keyof typeof MODAL_WINDOW_NAMES, Component> = {
 
 const openedModalWindow = computed(() => uiStore.openedModalWindow)
 
+const showInstructionsLink = computed(() => {
+  return (
+      openedModalWindow.value?.name === MODAL_WINDOW_NAMES.RESOURCE_CREATION ||
+      openedModalWindow.value?.name === MODAL_WINDOW_NAMES.RESOURCE_EDITING
+  )
+})
 /* const closeModal = () => {
   uiStore.setModalWindowState()
 } */
