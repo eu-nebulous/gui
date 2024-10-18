@@ -532,7 +532,7 @@ const availableRegions:IRegions = {
   ]
 }
 
-const availableInstanceTypes:ITypes = [
+const availableInstanceTypes = ref<IType[]>([
   { instanceType: 'c6g.medium' },
   { instanceType: 'm6g.medium' },
   { instanceType: 'm6gd.medium' },
@@ -1374,8 +1374,8 @@ const availableInstanceTypes:ITypes = [
   { instanceType: 'g6e.48xlarge' },
   { instanceType: 'u7i-12tb.224xlarge' },
   { instanceType: 'u7in-24tb.224xlarge' },
-  { instanceType: 'u7in-32tb.224xlarge' }
-];
+  { instanceType: 'u7in-32tb.224xlarge' },
+]);
 
 const rules = ref<IResourcePayload>(props.rules)
 

@@ -7,12 +7,17 @@ import { SNACKBAR_MESSAGE_TYPES } from "@/constants";
 interface ApplicationState {
   applications: IPagination<IApplicationOverview>
   pollingTimerId?: number;
+  pollingAttempts: number; 
+  pollingStartTime?: number; 
 }
 
 export const useApplicationStore = defineStore("application", {
   state: (): ApplicationState => ({
     applications: { pages: 0, currentPage: 0, results: [] },
     pollingTimerId: undefined,
+    pollingAttempts: 0,
+    pollingStartTime: undefined,
+    
   }),
   actions: {
     async validateApplication(payload: Partial<IApplication>): Promise<boolean> {
@@ -109,11 +114,7 @@ export const useApplicationStore = defineStore("application", {
       const interval = 10000; // 10 seconds
       const maxPollingTime = 20000; // 20 seconds
       const maxPollingAttempts = 4;
-
-      let interval = 10000; //10 sec
-      //const maxInterval = 60000;
-
-
+      
       const pollStatus = async () => {
         const deployingApps = this.applications.results.filter(
             (app) => app.status === "deploying" || app.status === "undeploying"
