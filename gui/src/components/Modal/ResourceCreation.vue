@@ -24,7 +24,7 @@ import {SNACKBAR_MESSAGE_TYPES} from "@/constants"
 import {IResourcePayload} from "@/types/resource.ts"
 import ResourceForm from "@/components/Modal/ResourceForm.vue";
 import {IPlatform} from "@/interfaces/platform.interface.ts";
-import { IRegion } from "@/interfaces/resources.interface.ts"
+import { IRegion, IType } from "@/interfaces/resources.interface.ts"
 
 const resourceStore = useResourceStore()
 const uiStore = useUIStore()
@@ -35,6 +35,7 @@ const resourceData = reactive<IResourcePayload>({
   _platform: [{"uuid":'','title':''} as IPlatform], // TODO Remove this
   securityGroup:"",
   regions:"",
+  excludedInstanceTypes: "",
   subnet:"",
   endpoint:"",
   identityVersion:"",
@@ -56,7 +57,11 @@ const externalServerValidation = () => true
 
 const rules = {
   title: { required, externalServerValidation },
-  platform: { required, externalServerValidation }
+  platform: { required, externalServerValidation },
+  credentials: {
+    user: { required, externalServerValidation },
+    secret: { required, externalServerValidation },
+  }
 }
 
 const $externalResults = reactive({})
@@ -68,14 +73,18 @@ const closeModal = (skipConfirmation: boolean = false) => {
 
 
 const createResource = async () => {
-  // Map regions from objects to string (comma-separated region identifiers)
-  if (Array.isArray(resourceData.regions)) {
-    resourceData.regions = resourceData.regions.map((region: IRegion) => region.region).join(',');
-  }
-
+  
   if (!(await v$.value.$validate())) {
     console.log("Failed validation");
     return;
+  }
+  // Map regions from objects
+  if (Array.isArray(resourceData.regions)) {
+    resourceData.regions = resourceData.regions.map((region: IRegion) => region.region).join(',');
+  }
+  // Map excludedInstanceTypes from objects
+  if (Array.isArray(resourceData.excludedInstanceTypes)) {
+    resourceData.excludedInstanceTypes = resourceData.excludedInstanceTypes.map((type: IType) => type.instanceType).join(',');
   }
 
   resourceStore

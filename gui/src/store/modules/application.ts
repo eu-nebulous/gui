@@ -7,12 +7,17 @@ import { SNACKBAR_MESSAGE_TYPES } from "@/constants";
 interface ApplicationState {
   applications: IPagination<IApplicationOverview>
   pollingTimerId?: number;
+  pollingAttempts: number; 
+  pollingStartTime?: number; 
 }
 
 export const useApplicationStore = defineStore("application", {
   state: (): ApplicationState => ({
     applications: { pages: 0, currentPage: 0, results: [] },
     pollingTimerId: undefined,
+    pollingAttempts: 0,
+    pollingStartTime: undefined,
+    
   }),
   actions: {
     async validateApplication(payload: Partial<IApplication>): Promise<boolean> {
@@ -106,9 +111,10 @@ export const useApplicationStore = defineStore("application", {
       console.log("Polling started...");
 
       const batchSize = 100;
-      let interval = 10000; //10 sec
-      //const maxInterval = 60000;
-
+      const interval = 10000; // 10 seconds
+      const maxPollingTime = 20000; // 20 seconds
+      const maxPollingAttempts = 4;
+      
       const pollStatus = async () => {
         const deployingApps = this.applications.results.filter(
             (app) => app.status === "deploying" || app.status === "undeploying"
@@ -120,7 +126,19 @@ export const useApplicationStore = defineStore("application", {
         }
 
         console.log(`Polling for ${deployingApps.length} deploying/undeploying applications.`);
+        
+        if (this.pollingAttempts >= maxPollingAttempts) {
+          console.log("Max polling attempts reached. Stopping polling.");
+          this.stopPolling();
+          return;
+        }
 
+        if (Date.now() - (this.pollingStartTime || 0) > maxPollingTime) {
+          console.log("Max polling time reached. Stopping polling.");
+          this.stopPolling();
+          return;
+        }
+        
         for (let i = 0; i < deployingApps.length; i += batchSize) {
           const batch = deployingApps.slice(i, i + batchSize);
           await this.checkApplicationStatus(batch.map((app) => app.uuid));
@@ -132,12 +150,18 @@ export const useApplicationStore = defineStore("application", {
 
         if (stillDeploying) {
           console.log(`Some applications are still deploying. Polling again.`);
+
+          this.pollingAttempts++;
+
           this.pollingTimerId = window.setTimeout(pollStatus, interval);
         } else {
           console.log("All applications have completed. Stopping polling.");
           this.stopPolling();
         }
       };
+
+      this.pollingStartTime = Date.now(); // Set the polling start time
+      this.pollingAttempts = 0; // Reset the polling attempts
 
       pollStatus();
     },
@@ -146,6 +170,9 @@ export const useApplicationStore = defineStore("application", {
       if (this.pollingTimerId) {
         clearTimeout(this.pollingTimerId);
         this.pollingTimerId = undefined;
+        this.pollingStartTime = undefined; // Reset polling start time
+        this.pollingAttempts = 0;
+
         console.log("Polling stopped.");
       }
     },
