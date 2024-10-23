@@ -1,7 +1,7 @@
 <template>
   <div class="flex flex-col text-start">
     <slot name="title"></slot>
-    <ResourceForm :resource-data="resourceData" :rules="rules"/>
+    <ResourceForm :resource-data="resourceData" :rules="rules" :is-editing="true" />
     <Dialog.Footer>
       <Button type="button" variant="outline-secondary" @click="closeModal(false)" class="w-20 mr-4"> Cancel </Button>
       <Button variant="primary" type="button" class="w-20" @click="editResource"> Save </Button>
