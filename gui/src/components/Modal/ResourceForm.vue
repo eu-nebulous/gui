@@ -225,11 +225,12 @@ import Button from "@/base-components/Button";
 
 const resourceStore = useResourceStore()
 
-const props = defineProps(['resourceData', 'rules'])
+const props = defineProps(['resourceData', 'rules', 'isEditing']);
+
 
 const resourceData = ref<IResourcePayload>(props.resourceData)
 
-const showPrivateKey = ref(false);
+const showPrivateKey = ref(!props.isEditing);
 
 const maskedPrivateKey = computed(() => {
   return props.resourceData.sshCredentials.privateKey.replace(/./g, '*');
