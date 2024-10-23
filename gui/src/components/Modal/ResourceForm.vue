@@ -230,7 +230,9 @@ const props = defineProps(['resourceData', 'rules', 'isEditing']);
 
 const resourceData = ref<IResourcePayload>(props.resourceData)
 
+
 const showPrivateKey = ref(!props.isEditing);
+
 
 const maskedPrivateKey = computed(() => {
   return props.resourceData.sshCredentials.privateKey.replace(/./g, '*');
