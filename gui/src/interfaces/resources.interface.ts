@@ -26,6 +26,8 @@ export interface IResource {
   identityVersion: string
   defaultNetwork: string
   enabled: boolean
+  scope: string,
+  project: string,
   credentials: ICredentials
   sshCredentials: ISSHCredentials
   platform: IPlatform,

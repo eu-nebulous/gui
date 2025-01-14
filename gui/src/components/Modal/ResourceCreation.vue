@@ -38,6 +38,8 @@ const resourceData = reactive<IResourcePayload>({
   validInstanceTypes: "",
   subnet:"",
   endpoint:"",
+  scope:"project",
+  project:"",
   identityVersion:"",
   defaultNetwork:"",
   credentials: {
