@@ -19,7 +19,7 @@ export interface IResource {
   uuid: string
   title: string
   regions: string | Array<IRegion>
-  excludedInstanceTypes: string | Array<IType>
+  validInstanceTypes: string | Array<IType>
   securityGroup: string
   subnet: string
   endpoint: string

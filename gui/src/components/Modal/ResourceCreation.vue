@@ -35,7 +35,7 @@ const resourceData = reactive<IResourcePayload>({
   _platform: [{"uuid":'','title':''} as IPlatform], // TODO Remove this
   securityGroup:"",
   regions:"",
-  excludedInstanceTypes: "",
+  validInstanceTypes: "",
   subnet:"",
   endpoint:"",
   identityVersion:"",
@@ -82,9 +82,9 @@ const createResource = async () => {
   if (Array.isArray(resourceData.regions)) {
     resourceData.regions = resourceData.regions.map((region: IRegion) => region.region).join(',');
   }
-  // Map excludedInstanceTypes from objects
-  if (Array.isArray(resourceData.excludedInstanceTypes)) {
-    resourceData.excludedInstanceTypes = resourceData.excludedInstanceTypes.map((type: IType) => type.instanceType).join(',');
+  // Map validInstanceTypes from objects
+  if (Array.isArray(resourceData.validInstanceTypes)) {
+    resourceData.validInstanceTypes = resourceData.validInstanceTypes.map((type: IType) => type.instanceType).join(',');
   }
 
   resourceStore

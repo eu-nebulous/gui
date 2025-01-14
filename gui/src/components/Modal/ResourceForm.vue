@@ -54,11 +54,11 @@
              class="flex flex-col"
         >
           <div class="mt-4 mb-3">
-            <Label>Exclude Instance Types</Label>
+            <Label>Valid Instance Types</Label>
             <div v-if="availableInPlatform(['AWS'])"
             >
               <VueMultiselect
-                  v-model="resourceData.excludedInstanceTypes"
+                  v-model="resourceData.validInstanceTypes"
                   :close-on-select="true"
                   :clear-on-select="false"
                   :multiple="true"
