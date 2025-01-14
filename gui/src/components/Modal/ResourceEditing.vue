@@ -1210,10 +1210,10 @@ const mapFieldsForDisplay = () => {
       resourceData.regions = _.filter(availableRegions.value['AWS'], (region: IRegion) => regionIds.includes(region.region))
     }
 
-    // Map excludedInstanceTypes from comma-separated string to array of instance types
-    if (resourceData.excludedInstanceTypes && typeof resourceData.excludedInstanceTypes === 'string') {
-      const excludedInstanceTypesIds = resourceData.excludedInstanceTypes.split(',')
-      resourceData.excludedInstanceTypes = _.filter(availableInstanceTypes.value['AWS'], (instanceType: IType) => excludedInstanceTypesIds.includes(instanceType.instanceType)
+    // Map validInstanceTypes from comma-separated string to array of instance types
+    if (resourceData.validInstanceTypes && typeof resourceData.validInstanceTypes === 'string') {
+      const validInstanceTypesIds = resourceData.validInstanceTypes.split(',')
+      resourceData.validInstanceTypes = _.filter(availableInstanceTypes.value['AWS'], (instanceType: IType) => validInstanceTypesIds.includes(instanceType.instanceType)
       )
     }
   }
@@ -1230,8 +1230,8 @@ const formatFieldsForSubmission = () => {
     }
 
     // Format excludedInstanceTypes as a comma-separated string
-    if (Array.isArray(resourceData.excludedInstanceTypes)) {
-      resourceData.excludedInstanceTypes = resourceData.excludedInstanceTypes.map((instanceType: IType) => instanceType.instanceType).join(',')
+    if (Array.isArray(resourceData.validInstanceTypes)) {
+      resourceData.validInstanceTypes = resourceData.validInstanceTypes.map((instanceType: IType) => instanceType.instanceType).join(',')
     }
   }
 }

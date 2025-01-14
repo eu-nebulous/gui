@@ -54,11 +54,11 @@
              class="flex flex-col"
         >
           <div class="mt-4 mb-3">
-            <Label>Exclude Instance Types</Label>
+            <Label>Valid Instance Types</Label>
             <div v-if="availableInPlatform(['AWS'])"
             >
               <VueMultiselect
-                  v-model="resourceData.excludedInstanceTypes"
+                  v-model="resourceData.validInstanceTypes"
                   :close-on-select="true"
                   :clear-on-select="false"
                   :multiple="true"
@@ -69,6 +69,44 @@
               </VueMultiselect>
             </div>
             
+          </div>
+        </div>
+        <div v-if="availableInPlatform(['OPENSTACK'])"
+             class="flex flex-col"
+        >
+          <div class="mt-4 mb-3">
+            <Label>Scope</Label>
+            <div v-if="availableInPlatform(['OPENSTACK'])"
+            >
+              <Select
+              v-model="resourceData.scope"
+              :class="{
+                'input--invalid': v$.platform.$error
+              }"
+              >
+                <option v-for="(scope, index) in availableScopes" :key="index" :value="scope.value">
+                  {{ scope.label }}
+                </option>
+              </Select>
+            </div>
+
+          </div>
+          <div class="mt-4 mb-3">
+            <Label>Project</Label>
+            <div v-if="availableInPlatform(['OPENSTACK'])"
+            >
+              <Input
+              v-model="resourceData.project"
+              :class="{
+                'input--invalid': v$.platform.$error
+              }"
+              >
+                <option v-for="(scope, index) in availableScopes" :key="index" :value="scope.value">
+                  {{ scope.label }}
+                </option>
+              </Input>
+            </div>
+
           </div>
         </div>
       </div>
@@ -240,6 +278,13 @@ const maskedPrivateKey = computed(() => {
 const togglePrivateKeyVisibility = () => {
   showPrivateKey.value = !showPrivateKey.value;
 }
+
+const availableScopes = [
+  { label: "project" , value: "project"},
+  { label: "projectId" , value: "projectId"},
+  { label: "domain" , value: "domain"},
+  { label: "domainId" , value: "domainId"}
+]
 
 const availableRegions:IRegions = {
   'AWS': [
