@@ -3,7 +3,7 @@ type Variant = "default" | "boxed"
 </script>
 
 <script setup lang="ts">
-import { ref, provide, useSlots, ComputedRef, computed } from "vue"
+import {ref, provide, useSlots, ComputedRef, computed, Slot} from "vue"
 
 export type ProvideGroup = ComputedRef<{
   selectedIndex?: number | null
@@ -17,7 +17,7 @@ interface GroupProps {
   variant?: Variant
 }
 
-const slots = useSlots()
+const slots = useSlots() as Record<string, Slot | undefined>;
 
 const { as, selectedIndex, variant } = withDefaults(defineProps<GroupProps>(), {
   as: "div",
