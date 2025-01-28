@@ -1229,7 +1229,6 @@ const formatFieldsForSubmission = () => {
       resourceData.regions = resourceData.regions.map((region: IRegion) => region.region).join(',')
     }
 
-    // Format excludedInstanceTypes as a comma-separated string
     if (Array.isArray(resourceData.validInstanceTypes)) {
       resourceData.validInstanceTypes = resourceData.validInstanceTypes.map((instanceType: IType) => instanceType.instanceType).join(',')
     }

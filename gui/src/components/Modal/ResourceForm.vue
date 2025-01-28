@@ -62,7 +62,7 @@
                   :close-on-select="true"
                   :clear-on-select="false"
                   :multiple="true"
-                  placeholder="Select Instance Types to Exclude"
+                  placeholder="Select Valid Instance Types"
                   label="instanceType"
                   track-by="instanceType"
                   :options="availableInstanceTypes">
