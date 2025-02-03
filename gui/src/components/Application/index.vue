@@ -7,6 +7,7 @@
     returnRouteName="applications"
     :responseErrorMessages="responseErrorMessages"
     :v$="v$"
+    :appId="applicationData.uuid"
     :save-enabled="applicationData.status =='draft'"
     @saveClick="saveClickHandler"
   >
@@ -46,6 +47,11 @@ import {ITemplate} from "@/interfaces/template.interface.ts"
 import {IParameter} from "@/interfaces/parameter.interface.ts"
 import {AxiosError} from "axios"
 import {IEnvironment} from "@/interfaces/environment.interface.ts";
+import Button from "@/base-components/Button";
+import userService from "@/store/api-services/user.service.ts";
+import {useUserStore} from "@/store/modules/user.ts";
+import FileIcon from "@/base-components/FileIcon";
+
 
 interface ApplicationProps {
   applicationApiCall: (payload: Partial<IApplication>) => Promise<IApplication>
@@ -105,6 +111,7 @@ const applicationData: IApplication = reactive(_.cloneDeep(props.incomingApplica
 const rules = computed(() => ({
   title: { required }
 }))
+
 
 const v$ = useVuelidate(rules, applicationData)
 
