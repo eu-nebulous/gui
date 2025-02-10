@@ -108,61 +108,31 @@ export const useApplicationStore = defineStore("application", {
     },
 
     startPolling() {
-      console.log("Polling started...");
 
       const batchSize = 100;
-      const interval = 10000; // 10 seconds
-      const maxPollingTime = 20000; // 20 seconds
-      const maxPollingAttempts = 4;
-      
+      const interval = 2000; // 10 seconds
+
       const pollStatus = async () => {
-        const deployingApps = this.applications.results.filter(
-            (app) => app.status === "deploying" || app.status === "undeploying"
-        );
-
-        if (deployingApps.length === 0) {
-          console.log("No applications to poll for.");
-          return;
+        clearTimeout(this.pollingTimerId)
+        console.log(`Polling for ${batchSize} deploying/undeploying applications.`);
+        if(!this.applications.results || this.applications.results.length <=0){
+          this.pollingTimerId = window.setTimeout(pollStatus, interval*3);//wait a little bit longer
+          return
         }
-
-        console.log(`Polling for ${deployingApps.length} deploying/undeploying applications.`);
-        
-        if (this.pollingAttempts >= maxPollingAttempts) {
-          console.log("Max polling attempts reached. Stopping polling.");
-          this.stopPolling();
-          return;
+        const pages = Math.ceil(this.applications.results.length/batchSize);
+        for (let i = 0; i < pages; i ++) {
+          try{
+            const batch = this.applications.results.slice(i+(i*batchSize),i+(i*batchSize)+batchSize);
+            await this.checkApplicationStatus(batch.map((app) => app.uuid));
+          }catch(err){
+            console.log(err);
+          }
         }
-
-        if (Date.now() - (this.pollingStartTime || 0) > maxPollingTime) {
-          console.log("Max polling time reached. Stopping polling.");
-          this.stopPolling();
-          return;
-        }
-        
-        for (let i = 0; i < deployingApps.length; i += batchSize) {
-          const batch = deployingApps.slice(i, i + batchSize);
-          await this.checkApplicationStatus(batch.map((app) => app.uuid));
-        }
-
-        const stillDeploying = this.applications.results.some(
-            (app) => app.status === "deploying" || app.status === "undeploying"
-        );
-
-        if (stillDeploying) {
-          console.log(`Some applications are still deploying. Polling again.`);
-
-          this.pollingAttempts++;
-
-          this.pollingTimerId = window.setTimeout(pollStatus, interval);
-        } else {
-          console.log("All applications have completed. Stopping polling.");
-          this.stopPolling();
-        }
+        this.pollingTimerId = window.setTimeout(pollStatus, interval);
       };
 
       this.pollingStartTime = Date.now(); // Set the polling start time
       this.pollingAttempts = 0; // Reset the polling attempts
-
       pollStatus();
     },
 
