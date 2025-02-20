@@ -32,7 +32,7 @@
           <Lucide v-if="application.status=='draft' || application.status=='failed'  || application.status=='ready' || !application.status"  icon="PlayCircle" class="w-10 text-white" @click="deployApplication(application)" />
           <Lucide v-if="application.status=='draft' || application.status=='failed' || application.status=='ready' || !application.status" icon="Pencil" class="w-10 text-warning" @click="toApplicationEditing(application)" />
           <Lucide v-if="application.status == 'deployed'  || !application.status" icon="Unlock" class="w-10 text-alert"  @click="undeployApplication(application)" />
-          <Lucide v-if="application.status != 'deploying' && application.status != 'undeploying' " icon="Copy" class="w-10 text-info" @click="duplicateApplication(application)" />
+          <Lucide icon="Copy" class="w-10 text-info" @click="duplicateApplication(application)" />
           <Lucide v-if="application.status=='draft' || application.status=='failed' || application.status=='ready' || !application.status" icon="Trash2" class="w-10 text-danger" @click="removeApplication(application.uuid)" />
         </div>
       </div>
