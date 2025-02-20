@@ -100,7 +100,9 @@ const props = withDefaults(defineProps<ApplicationProps>(), {
         functionName: "",
         functionType: "maximize",
         functionExpression: "",
-        functionExpressionVariables: []
+        functionExpressionVariables: [],
+        functionConstraintOperator:"==",
+        selected:false
       }
     ]
   })
