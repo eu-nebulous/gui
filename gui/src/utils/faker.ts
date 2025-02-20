@@ -84,21 +84,21 @@ const fakers = {
     })
   },
   fakePhotos() {
-    const photos = []
+    const photos: string[] = []
     for (let i = 0; i < 2; i++) {
       photos[photos.length] = imageAssets["/src/assets/images/fakers/profile-" + _.random(1, 2) + ".jpg"].default
     }
     return _.sampleSize(photos, 10)
   },
   fakeImages() {
-    const images = []
+    const images: string[] = []
     for (let i = 0; i < 2; i++) {
       images[images.length] = imageAssets["/src/assets/images/fakers/preview-" + _.random(1, 2) + ".jpg"].default
     }
     return _.sampleSize(images, 10)
   },
   fakeDates() {
-    const dates = []
+    const dates: string[] = []
     for (let i = 0; i < 5; i++) {
       dates[dates.length] = dayjs.unix(_.random(1586584776897, 1672333200000) / 1000).format("DD MMMM YYYY")
     }
