@@ -8,7 +8,8 @@
     :responseErrorMessages="responseErrorMessages"
     :v$="v$"
     :appId="applicationData.uuid"
-    :save-enabled="applicationData.status =='draft'"
+    :loading="loadingStatus == 'loading'"
+    :save-enabled="applicationData.status == 'draft' || applicationData.status == 'failed'"
     @saveClick="saveClickHandler"
   >
     <template #title>
@@ -135,6 +136,7 @@ const getComponentList = async () => {
   componentList.value = await applicationStore.invokeYamlComponents(applicationData.content)
 }
 
+const loadingStatus = ref('idle')
 /* STAGES CONFIGURATION */
 const currentStage = ref(STAGES.APP_DETAILS)
 const stagesConfiguration = shallowRef()
@@ -374,14 +376,16 @@ const updateStagesData = () => {
 }
 
 const saveClickHandler = (data: Partial<IApplication>) => {
+  loadingStatus.value = 'loading'
   const appPayload = Object.assign(applicationData, data)
-  console.log(appPayload)
   appPayload.sloViolations =
     typeof applicationData.sloViolations !== "string"
       ? JSON.stringify(applicationData.sloViolations)
       : applicationData.sloViolations
 
-  props.applicationApiCall(appPayload).catch(handleError)
+  props.applicationApiCall(appPayload).catch(handleError).finally(()=>{
+    loadingStatus.value = 'done'
+  })
 }
 
 updateStagesData()
