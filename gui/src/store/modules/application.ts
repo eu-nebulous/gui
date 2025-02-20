@@ -1,8 +1,8 @@
-import { defineStore } from "pinia"
+import {defineStore} from "pinia"
 import applicationService from "@/store/api-services/application.service.ts"
-import { IApplication, IApplicationOverview } from "@/interfaces/application.interface.ts"
-import { useUIStore } from "@/store/modules/ui.ts"; // Import the UI store
-import { SNACKBAR_MESSAGE_TYPES } from "@/constants";
+import {IApplication, IApplicationOverview} from "@/interfaces/application.interface.ts"
+import {useUIStore} from "@/store/modules/ui.ts"; // Import the UI store
+import {SNACKBAR_MESSAGE_TYPES} from "@/constants";
 
 interface ApplicationState {
   applications: IPagination<IApplicationOverview>
@@ -24,10 +24,7 @@ export const useApplicationStore = defineStore("application", {
       return await applicationService.validateApplication(payload)
     },
     async getApplication(uuid: string): Promise<IApplication> {
-      const application = await applicationService.getApplication(uuid)
-      console.log("This application ", application)
-
-      return application
+      return await applicationService.getApplication(uuid)
     },
     async getAllApplications(): Promise<IPagination<IApplicationOverview>> {
       this.applications.results = await applicationService.getAllApplications()
@@ -82,10 +79,8 @@ export const useApplicationStore = defineStore("application", {
     },
 
     async checkApplicationStatus(uuids: string[]): Promise<void> {
-      console.log("Checking status for applications:", uuids);
 
       const response = await applicationService.checkApplicationStatus(uuids);
-      console.log("Received status updates:", response);
 
       response.forEach((updatedApp) => {
         const appIndex = this.applications.results.findIndex((app) => app.uuid === updatedApp.uuid);

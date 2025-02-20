@@ -19,13 +19,21 @@
         </div>
         <div class="ml-auto" v-if="!saveEnabled">
         </div>
-        <a class='button rounded bg-primary hover:bg-amber-950 border border-white p-2 hover:cursor-pointer '
+        <a class='button rounded dark:border-primary hover:bg-slate-700 border border-white p-2 hover:cursor-pointer inline-block mx-3'
             :href="cfsbUrl"
             target="_blank"
-        >CFSB </a>
-        <Button variant="primary" class="ml-auto" @click="onSaveClick"
+        >CFSB</a>
+        <Button variant="primary" class="ml-auto w-36"
+                :disabled="loading"
+                @click="onSaveClick"
+
           v-if="saveEnabled"
-        >Save</Button>
+        >
+          <span v-if="!loading">Save</span>
+          <LoadingIcon
+              icon="circles"
+              v-if="loading" />
+        </Button>
         <Button
           v-if="currentStage.next"
           variant="primary"
@@ -132,6 +140,7 @@ import Button from "@/base-components/Button"
 import Alert from "@/base-components/Alert/Alert.vue"
 import { IApplication } from "@/interfaces/application.interface.ts"
 import {useUserStore} from "@/store/modules/user.ts";
+import LoadingIcon from "@/base-components/LoadingIcon";
 
 const router = useRouter()
 const userStore = useUserStore()
@@ -142,6 +151,7 @@ interface MultiStepsProviderProps {
   appId: string
   entrypointComponent: string
   returnRouteName: string
+  loading: boolean,
   responseErrorMessages: Array<string>
   v$?: Validation
 }
