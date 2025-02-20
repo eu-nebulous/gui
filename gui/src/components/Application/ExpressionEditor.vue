@@ -212,8 +212,8 @@ const props = withDefaults(defineProps<ExpressionEditorProps>(), {
         functionName: "",
         functionType: "maximize",
         functionExpression: "",
-        functionConstraintOperator:"=",
         functionExpressionVariables: [],
+        functionConstraintOperator:"==",
         selected:false
       }
     ]
