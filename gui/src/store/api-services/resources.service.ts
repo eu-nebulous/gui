@@ -23,6 +23,6 @@ export default {
     return axios.delete(`/api/v1/resources/${uuid}/uuid`).then(({ data }) => data)
   },
   async getPlatforms(): Promise<Array<IPlatform>> {
-    return axios.get("/api/v1/platforms/all").then(({ data }) => data)
+    return axios.get("/api/v1/platforms/all")
   }
 }

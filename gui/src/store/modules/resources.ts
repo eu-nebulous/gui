@@ -1200,7 +1200,7 @@ export const useResourceStore = defineStore("resource", {
                 return editedResource
             })
         },
-        async getPlatforms(): Array<IPlatform[]>{
+        async getPlatforms() {
             this.platforms = await resourceService.getPlatforms()
         }
     }
