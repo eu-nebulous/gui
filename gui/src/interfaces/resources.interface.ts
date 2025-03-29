@@ -11,6 +11,7 @@ export interface ICredentials{
   user: string
   secret: string
   domain: string
+  subscriptionId: string
 
 }
 
