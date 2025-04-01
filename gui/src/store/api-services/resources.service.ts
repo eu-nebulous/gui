@@ -1,4 +1,4 @@
-import axios from "axios"
+import axios, {AxiosResponse} from "axios"
 import {INodeCandidate, IResource} from "@/interfaces/resources.interface.ts"
 import { IResourcePayload } from "@/types/resource.ts"
 import { DeleteResponseType } from "@/types/responses.ts"
@@ -22,7 +22,7 @@ export default {
   async deleteResource(uuid: string): Promise<DeleteResponseType> {
     return axios.delete(`/api/v1/resources/${uuid}/uuid`).then(({ data }) => data)
   },
-  async getPlatforms(): Promise<Array<IPlatform>> {
+  async getPlatforms(): Promise<AxiosResponse> {
     return axios.get("/api/v1/platforms/all")
   }
 }
