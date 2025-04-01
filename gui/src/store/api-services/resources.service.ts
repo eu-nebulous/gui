@@ -22,7 +22,11 @@ export default {
   async deleteResource(uuid: string): Promise<DeleteResponseType> {
     return axios.delete(`/api/v1/resources/${uuid}/uuid`).then(({ data }) => data)
   },
+<<<<<<< HEAD
   async getPlatforms(): Promise<AxiosResponse> {
+=======
+  async getPlatforms(): Promise<Array<IPlatform>> {
+>>>>>>> origin/main
     return axios.get("/api/v1/platforms/all")
   }
 }
