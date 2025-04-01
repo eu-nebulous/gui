@@ -96,8 +96,6 @@ export const useApplicationStore = defineStore("application", {
               type: SNACKBAR_MESSAGE_TYPES.SUCCESS,
             });
           }
-
-          console.log(`Updated application ${updatedApp.uuid} to status ${updatedApp.status}`);
         }
       });
     },

@@ -1201,7 +1201,8 @@ export const useResourceStore = defineStore("resource", {
             })
         },
         async getPlatforms() {
-            this.platforms = await resourceService.getPlatforms()
+            const res = await resourceService.getPlatforms()
+            this.platforms = res.data
         }
     }
 })
