@@ -16,6 +16,10 @@ export default {
     async getMathParsedVariables(payload: { equation: string }): Promise<{ variables: Array<string> }> {
         return axios.post("/api/v1/mathparser/expression", payload).then(({data}) => data)
     },
+    async generateKubevela(payload): Promise<{success:boolean, answer:string}> {
+        return axios.post("/api/v1/application/generate", {prompt:payload}).then(({data}) => data)
+    },
+
     async getYamlParsedKeys(payload: { content: string }, key: string): Promise<Array<{
         label: string;
         value: string

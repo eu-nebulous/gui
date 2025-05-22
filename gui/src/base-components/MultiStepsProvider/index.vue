@@ -21,8 +21,9 @@
         </div>
         <a class='button rounded dark:border-primary hover:bg-slate-700 border border-white p-2 hover:cursor-pointer inline-block mx-3'
             :href="cfsbUrl"
+            v-if="!loading && cfsbUrl && appId != ''"
             target="_blank"
-        >CFSB</a>
+        >CFSB - {{appId}}</a>
         <Button variant="primary" class="ml-auto w-36"
                 :disabled="loading"
                 @click="onSaveClick"

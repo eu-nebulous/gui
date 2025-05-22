@@ -9,7 +9,7 @@ export default {
 </script>
 
 <script setup lang="ts">
-import { ref, onMounted, computed, useAttrs, onBeforeUnmount } from "vue"
+import {ref, onMounted, computed, useAttrs, onBeforeUnmount, watch} from "vue"
 import { twMerge } from "tailwind-merge"
 import { debounce } from "@/utils/helper.ts"
 import * as monaco from "monaco-editor/esm/vs/editor/editor.api"
@@ -23,17 +23,18 @@ interface IEditorProps {
   theme?: string
   fontSize?: number
   destroyDelay?: number
+  autoLayout?: boolean
   withMinimap?: boolean
 }
 
 interface IEditorEmit {
   (e: "update:modelValue", value: string): void
-
   (e: "change", value: string, event: IModelContentChangedEvent): void
 }
 
 const props = withDefaults(defineProps<IEditorProps>(), {
   fontSize: 14,
+  autoLayout: true,
   destroyDelay: 0,
   withMinimap: false
 })
@@ -61,7 +62,7 @@ const initMonacoEditor = () => {
     language: props.language,
     theme: "vs-dark-custom-theme",
     fontSize: props.fontSize,
-    automaticLayout: true,
+    automaticLayout: props.autoLayout,
     minimap: { enabled: props.withMinimap }
   })
 
@@ -81,6 +82,27 @@ const initEventHandlers = () => {
   }
 }
 
+// Add a function to update the editor content
+const updateEditorContent = (newValue: string) => {
+  if (editorInstance) {
+    const currentValue = editorInstance.getValue();
+    if (currentValue !== newValue) {
+      // Get the current cursor position and scroll position
+      const position = editorInstance.getPosition();
+      const scrollTop = editorInstance.getScrollTop();
+
+      // Update the content
+      editorInstance.setValue(newValue);
+
+      // Restore cursor and scroll positions
+      if (position) {
+        editorInstance.setPosition(position);
+      }
+      editorInstance.setScrollTop(scrollTop);
+    }
+  }
+}
+
 onBeforeUnmount(() => {
   setTimeout(destroy, props.destroyDelay)
 })
@@ -95,10 +117,16 @@ const resetEditorLayout = () => {
 
   window.requestAnimationFrame(() => {
     const rect = editorRef.value.getBoundingClientRect()
+    console.log(rect)
     editorInstance.layout({ width: rect.width, height: rect.height })
   })
 }
 
 const debounced = debounce(resetEditorLayout, 200)
 window.addEventListener("resize", debounced)
+
+// Watch for changes to modelValue and update editor content accordingly
+watch(() => props.modelValue, (newValue) => {
+  updateEditorContent(newValue);
+}, { immediate: false })
 </script>

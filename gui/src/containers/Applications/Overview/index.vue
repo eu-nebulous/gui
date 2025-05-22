@@ -29,6 +29,7 @@
           </p>
         </div>
         <div class="flex space-x-2">
+          <Lucide  icon="PlayCircle" class="w-10 text-white" @click="deployApplication(application)" />
           <Lucide v-if="application.status=='draft' || application.status=='failed'  || application.status=='ready' || !application.status"  icon="PlayCircle" class="w-10 text-white" @click="deployApplication(application)" />
           <Lucide v-if="application.status=='draft' || application.status=='failed' || application.status=='ready' || !application.status" icon="Pencil" class="w-10 text-warning" @click="toApplicationEditing(application)" />
           <Lucide v-if="application.status == 'deployed'  || !application.status" icon="Unlock" class="w-10 text-alert"  @click="undeployApplication(application)" />
