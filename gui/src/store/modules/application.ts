@@ -59,6 +59,10 @@ export const useApplicationStore = defineStore("application", {
     async invokeMathParsing(equation: string): Promise<{ variables: Array<string> }> {
       return await applicationService.getMathParsedVariables({ equation })
     },
+    async invoiceGenerateKubevela(promp: string): Promise<{success:boolean, answer:string}> {
+      return await applicationService.generateKubevela(promp)
+    },
+
     async invokeYamlParsing(content: string, key: string): Promise<Array<{ label: string; value: string }>> {
       return await applicationService.getYamlParsedKeys({ content }, key)
     },
