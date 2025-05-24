@@ -17,8 +17,18 @@ const attrs = useAttrs()
 const computedClass = computed(() =>
   twMerge(["stroke-[1.3] w-[1.4rem] h-[1.4rem] cursor-pointer", typeof attrs.class === "string" && attrs.class])
 )
+
+// Filter out class from attrs to avoid duplication
+const filteredAttrs = computed(() => {
+  const { class: _, ...rest } = attrs
+  return rest
+})
 </script>
 
 <template>
-  <component :is="lucideIcons[props.icon]" :class="computedClass"> <slot></slot></component>
+  <component
+    :is="(lucideIcons[props.icon] as any)"
+    :class="computedClass"
+    v-bind="filteredAttrs"
+  />
 </template>
