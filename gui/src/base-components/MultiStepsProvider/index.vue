@@ -19,9 +19,21 @@
         </div>
         <div class="ml-auto" v-if="!saveEnabled">
         </div>
-        <Button variant="primary" class="ml-auto" @click="onSaveClick"
+        <a class='button rounded dark:border-primary hover:bg-slate-700 border border-white p-2 hover:cursor-pointer inline-block mx-3'
+            :href="cfsbUrl"
+            target="_blank"
+        >CFSB</a>
+        <Button variant="primary" class="ml-auto w-36"
+                :disabled="loading"
+                @click="onSaveClick"
+
           v-if="saveEnabled"
-        >Save</Button>
+        >
+          <span v-if="!loading">Save</span>
+          <LoadingIcon
+              icon="circles"
+              v-if="loading" />
+        </Button>
         <Button
           v-if="currentStage.next"
           variant="primary"
@@ -127,14 +139,19 @@ import IncludeSvgRadialGradient from "@/assets/svg/radial-gradient.svg"
 import Button from "@/base-components/Button"
 import Alert from "@/base-components/Alert/Alert.vue"
 import { IApplication } from "@/interfaces/application.interface.ts"
+import {useUserStore} from "@/store/modules/user.ts";
+import LoadingIcon from "@/base-components/LoadingIcon";
 
 const router = useRouter()
+const userStore = useUserStore()
 
 interface MultiStepsProviderProps {
   stages: Record<string, Stage>
-  saveEnabled: boolean
+  saveEnabled: boolean,
+  appId: string
   entrypointComponent: string
   returnRouteName: string
+  loading: boolean,
   responseErrorMessages: Array<string>
   v$?: Validation
 }
@@ -194,6 +211,13 @@ const isPrevButtonDisabled = computed(() => {
   return currentStage.value.isPrevButtonDisabled
 })
 const prevButtonTooltip = computed(() => (isPrevButtonDisabled.value ? currentStage.value.prevButtonTooltip : ""))
+
+
+const cfsbUrl = computed(()=>{
+  console.log(import.meta.env.VITE_CFSB_API_URL+`?appId=${props.appId}&nonce=${userStore.user?.uuid}`)
+  return  import.meta.env.VITE_CFSB_API_URL+`?appId=${props.appId}&nonce=${userStore.user?.uuid}`
+})
+
 
 const toPreviousPage = async ({ rawNavigation }: { rawNavigation?: boolean } = {}) => {
   const { componentV$, ...data } = currentStageRef.value || {};

@@ -11,6 +11,7 @@ export interface ICredentials{
   user: string
   secret: string
   domain: string
+  subscriptionId: string
 
 }
 
@@ -19,13 +20,15 @@ export interface IResource {
   uuid: string
   title: string
   regions: string | Array<IRegion>
-  excludedInstanceTypes: string | Array<IType>
+  validInstanceTypes: string | Array<IType>
   securityGroup: string
   subnet: string
   endpoint: string
   identityVersion: string
   defaultNetwork: string
   enabled: boolean
+  scope: string,
+  project: string,
   credentials: ICredentials
   sshCredentials: ISSHCredentials
   platform: IPlatform,

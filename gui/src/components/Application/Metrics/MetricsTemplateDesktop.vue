@@ -330,7 +330,7 @@
                               v-model="metric.outputRaw.type"
                               :class="{ 'input--invalid': hasBackendError(`metrics[${index}].output.type`) }"
                             >
-                              <option v-for="(option, behaviorIndex) in BEHAVIOR_OPTIONS" :key="behaviorIndex">
+                              <option v-for="(option, behaviorIndex) in BEHAVIOR_RAW_OPTIONS" :key="behaviorIndex">
                                 {{ option }}
                               </option>
                             </Select>
@@ -387,6 +387,7 @@ import ArrowDown from "@/assets/svg/ArrowDown.svg"
 import Table from "@/base-components/Table"
 import MonacoEditor from "@/base-components/MonacoEditor/MonacoEditor.vue"
 import VueSelect from "vue3-select-component";
+import {BEHAVIOR_RAW_OPTIONS} from "../../../constants";
 
 const pathsWithError = inject<Ref<Array<string>>>("pathsWithError")
 

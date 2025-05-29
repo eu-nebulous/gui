@@ -25,9 +25,21 @@
                   <Table.Td class="break-all">{{ variable }}</Table.Td>
                 </Table.Tr>
               </Table.Tbody>
+              <hr class="my-3"/>
+              <p class="mb-2">This defines the cost of the deployment of the application which you can use,
+                as an expression variable for the utility functions.</p>
+              <Table.Tbody>
+              <Table.Tr>
+                <Table.Td class="break-all">
+                  application_deployment_price
+                </Table.Td>
+              </Table.Tr>
+              </Table.Tbody>
             </Table>
           </div>
         </div>
+
+
       </div>
       <!-- END: SIDE INFO -->
 
@@ -46,7 +58,9 @@
             :rules="utilitiesCollectionRules"
           >
             <template #default="{ v }">
-              <div class="box p-5">
+              <div class="box p-5 "
+                :class="{'dark:border-3 dark:border-primary':utilityFunction.selected}"
+              >
                 <div class="flex space-x-4 items-center">
                   <FormInput
                     type="text"
@@ -68,13 +82,15 @@
                     <option value="maximize">Maximize Utility</option>
                     <option value="minimize">Minimize Utility</option>
                     <option value="constant">Constant</option>
+                    <option value="constraint">Constraint</option>
                   </FormSelect>
+
                   <Lucide icon="Trash2" class="w-10 text-danger" @click="removeFunction(index)" />
                 </div>
                 <MonacoEditor
                   v-model="utilityFunction.functionExpression"
                   id="expression_editor"
-                  class="h-56 mt-5"
+                  class="h-16 mt-5"
                   language="math"
                   @change="debouncedMathExpressionParser(index)"
                   :class="{
@@ -106,8 +122,48 @@
                         <option v-for="(variableOption, optionIndex) in composedVariables" :key="optionIndex">
                           {{ variableOption }}
                         </option>
+                        <option :key="'application_deployment_price'">
+                          application_deployment_price
+                        </option>
                       </FormSelect>
                     </div>
+                  </FormInline>
+                  <FormInline
+                      class="flex-col items-center pt-5 mt-5 xl:flex-row first:mt-0 first:pt-0"
+                      v-if="utilityFunction.functionType == 'constraint'">
+                    <FormLabel class="xl:!mr-10">
+                      <p class="text-left font-medium text-md">
+                        Constraint
+                      </p>
+                    </FormLabel>
+                     <div class="flex-1 w-full mt-3 mr-3 xl:mt-0">
+                        <FormSelect v-model="utilityFunction.functionConstraintOperator">
+                            <option v-for="(operator, indx) in operators" :key="indx" >
+                            {{operator}}
+                        </option>
+                      </FormSelect>
+                     </div>
+                    <FormLabel>
+                      <p class="font-medium text-md text-right">
+                        0
+                      </p>
+                    </FormLabel>
+                  </FormInline>
+                  <FormInline
+                      class="flex-col items-center pt-5 mt-5 xl:flex-row first:mt-0 first:pt-0"
+                      v-if="shouldShowSelection(index)">
+                    <FormLabel class="xl:!mr-10">
+                      <p class="text-left font-medium text-md">
+                        Selected
+                      </p>
+                    </FormLabel>
+                    <FormSwitch>
+                      <FormSwitch.Input id="utility-function-selected-{{String(index)}}-secret"
+                                        v-model="utilityFunction.selected" type="checkbox"
+                                        @update:modelValue="toggleSelections(index)"
+
+                      />
+                    </FormSwitch>
                   </FormInline>
                 </div>
               </div>
@@ -123,19 +179,19 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, inject, Ref, onDeactivated, reactive, onActivated } from "vue"
+import {computed, inject, ref, Ref} from "vue"
 import _ from "lodash"
-import { debounce } from "@/utils/helper.ts"
-import { useApplicationStore } from "@/store/modules/application.ts"
-import { ValidateEach } from "@vuelidate/components"
-import { required } from "@vuelidate/validators"
+import {debounce} from "@/utils/helper.ts"
+import {useApplicationStore} from "@/store/modules/application.ts"
+import {ValidateEach} from "@vuelidate/components"
+import {required} from "@vuelidate/validators"
 import Lucide from "@/base-components/Lucide/Lucide.vue"
 import Table from "@/base-components/Table"
-import { FormInline, FormInput, FormSelect, FormLabel } from "@/base-components/Form"
-import { IUtilityFunction } from "@/interfaces/utilityFunctions.interface.ts"
+import {FormInline, FormInput, FormLabel, FormSelect} from "@/base-components/Form"
+import {IUtilityFunction} from "@/interfaces/utilityFunctions.interface.ts"
 import MonacoEditor from "@/base-components/MonacoEditor/MonacoEditor.vue"
-import STAGES from "@/components/Application/stages.ts"
-import { useVuelidate, Validation } from "@vuelidate/core"
+import {useVuelidate} from "@vuelidate/core"
+import { FormSwitch } from "@/base-components/Form"
 
 interface ExpressionEditorProps {
   payload: {
@@ -156,7 +212,9 @@ const props = withDefaults(defineProps<ExpressionEditorProps>(), {
         functionName: "",
         functionType: "maximize",
         functionExpression: "",
-        functionExpressionVariables: []
+        functionExpressionVariables: [],
+        functionConstraintOperator:"==",
+        selected:false
       }
     ]
   })
@@ -184,7 +242,9 @@ const addFunction = () => {
     functionName: "",
     functionType: "constant",
     functionExpression: "",
-    functionExpressionVariables: []
+    functionConstraintOperator: "==",
+    functionExpressionVariables: [],
+    selected: false
   })
 }
 
@@ -204,6 +264,21 @@ const hasBackendError = (path: string) => {
   return pathsWithError.value.includes(path)
 }
 
+const shouldShowSelection = (utilityFunctionIndx:number) => {
+  const availableFunctions = utilityFunctions.value.filter((utilityFunction) => {
+    return utilityFunction.functionType === 'maximize' || utilityFunction.functionType === 'minimize'
+  })
+  return availableFunctions.length > 1 && ['maximize', 'minimize'].indexOf(utilityFunctions.value[utilityFunctionIndx].functionType) >= 0
+
+}
+
+const toggleSelections= (utilityFunctionIndx:number)=>{
+  utilityFunctions.value.forEach((utilityFunction,idx) => {
+    utilityFunction.selected = utilityFunctionIndx == idx
+  })
+}
+
+const operators = ref([">" , "<" , "<=" , ">=" , "==" , "!=="])
 const v$ = useVuelidate({ $stopPropagation: true })
 
 defineExpose({ componentV$: computed(() => v$), utilityFunctions })

@@ -7,7 +7,9 @@
     returnRouteName="applications"
     :responseErrorMessages="responseErrorMessages"
     :v$="v$"
-    :save-enabled="applicationData.status =='draft'"
+    :appId="applicationData.uuid"
+    :loading="loadingStatus == 'loading'"
+    :save-enabled="applicationData.status == 'draft' || applicationData.status == 'failed'"
     @saveClick="saveClickHandler"
   >
     <template #title>
@@ -46,6 +48,11 @@ import {ITemplate} from "@/interfaces/template.interface.ts"
 import {IParameter} from "@/interfaces/parameter.interface.ts"
 import {AxiosError} from "axios"
 import {IEnvironment} from "@/interfaces/environment.interface.ts";
+import Button from "@/base-components/Button";
+import userService from "@/store/api-services/user.service.ts";
+import {useUserStore} from "@/store/modules/user.ts";
+import FileIcon from "@/base-components/FileIcon";
+
 
 interface ApplicationProps {
   applicationApiCall: (payload: Partial<IApplication>) => Promise<IApplication>
@@ -93,7 +100,9 @@ const props = withDefaults(defineProps<ApplicationProps>(), {
         functionName: "",
         functionType: "maximize",
         functionExpression: "",
-        functionExpressionVariables: []
+        functionExpressionVariables: [],
+        functionConstraintOperator:"==",
+        selected:false
       }
     ]
   })
@@ -105,6 +114,7 @@ const applicationData: IApplication = reactive(_.cloneDeep(props.incomingApplica
 const rules = computed(() => ({
   title: { required }
 }))
+
 
 const v$ = useVuelidate(rules, applicationData)
 
@@ -128,6 +138,7 @@ const getComponentList = async () => {
   componentList.value = await applicationStore.invokeYamlComponents(applicationData.content)
 }
 
+const loadingStatus = ref('idle')
 /* STAGES CONFIGURATION */
 const currentStage = ref(STAGES.APP_DETAILS)
 const stagesConfiguration = shallowRef()
@@ -367,14 +378,16 @@ const updateStagesData = () => {
 }
 
 const saveClickHandler = (data: Partial<IApplication>) => {
+  loadingStatus.value = 'loading'
   const appPayload = Object.assign(applicationData, data)
-  console.log(appPayload)
   appPayload.sloViolations =
     typeof applicationData.sloViolations !== "string"
       ? JSON.stringify(applicationData.sloViolations)
       : applicationData.sloViolations
 
-  props.applicationApiCall(appPayload).catch(handleError)
+  props.applicationApiCall(appPayload).catch(handleError).finally(()=>{
+    loadingStatus.value = 'done'
+  })
 }
 
 updateStagesData()

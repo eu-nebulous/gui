@@ -28,8 +28,8 @@ export default {
     // TODO: App object normalization to separate function. Reuse everywhere
     async getApplication(uuid: string): Promise<IApplication> {
         return axios.get(`/api/v1/application/${uuid}/uuid`).then(response => {
-            const application: any= response.data
-            console.log("getApplication " , application)
+            const application: any = response.data
+            console.log("getApplication ", application)
             return {
                 title: application.title,
                 content: application.content,
@@ -40,7 +40,11 @@ export default {
                     lowerValue,
                     higherValue
                 })),
-                environmentVariables: application.environmentVariables ? application.environmentVariables.map(({name, value, secret}: IEnvironment) => ({
+                environmentVariables: application.environmentVariables ? application.environmentVariables.map(({
+                                                                                                                   name,
+                                                                                                                   value,
+                                                                                                                   secret
+                                                                                                               }: IEnvironment) => ({
                     name,
                     value,
                     secret
@@ -106,16 +110,23 @@ export default {
                          functionName,
                          functionType,
                          functionExpression,
-                         functionExpressionVariables
+                         functionExpressionVariables,
+                         functionConstraintOperator,
+                         selected
                      }: IUtilityFunction) => ({
                         functionName,
                         functionType,
                         functionExpression,
-                        functionExpressionVariables
+                        functionExpressionVariables,
+                        functionConstraintOperator,
+                        selected
                     })
                 )
             }
         })
+    },
+    async getApplicationJson(uuid: string): Promise<IApplication> {
+        return axios.get(`/api/v1/application/${uuid}/uuid/json`)
     },
     async getAllApplications(): Promise<Array<IApplicationOverview>> {
         return axios.get("/api/v1/application/all").then(({data}) => data)
@@ -125,9 +136,8 @@ export default {
         return axios.post("/api/v1/application", payload).then(({data}) => data)
     },
     async editApplication(uuid: string, payload: Partial<IApplication>): Promise<IApplicationOverview> {
-        // TODO: remove updatedResource when BE has fixed it.
         console.log("Patching application", payload)
-        return axios.patch(`/api/v1/application/${uuid}/uuid`, payload).then(({data}) => data.updatedResource[0])
+        return axios.patch(`/api/v1/application/${uuid}/uuid`, payload).then(({data}) => data.updatedResource)
     },
     async deleteApplication(uuid: string): Promise<DeleteResponseType> {
         return axios.delete(`/api/v1/application/${uuid}/uuid`).then(({data}) => data)
@@ -135,9 +145,9 @@ export default {
     async deployApplication(uuid: string): Promise<DeployResponseType> {
         return axios.post(`/api/v1/application/${uuid}/uuid/deploy`).then(({data}) => data)
     },
-    async publishPolicies(policies:string): Promise<PolicyResponseType> {
-        console.log("Publishing policies" , policies)
-        return axios.post(`/api/v1/policies/publish`,{policies:policies}).then(({data}) => data)
+    async publishPolicies(policies: string): Promise<PolicyResponseType> {
+        console.log("Publishing policies", policies)
+        return axios.post(`/api/v1/policies/publish`, {policies: policies}).then(({data}) => data)
     },
     async duplicateApplication(uuid: string): Promise<IApplicationOverview> {
         return axios.post(`/api/v1/application/${uuid}/uuid/duplicate`).then(({data}) => data)
@@ -146,6 +156,6 @@ export default {
         return axios.post(`/api/v1/application/${uuid}/uuid/undeploy`).then(({data}) => data)
     },
     async checkApplicationStatus(uuids: string[]): Promise<Array<{ uuid: string; status: string }>> {
-        return axios.post("/api/v1/application/status", { uuids }).then(({ data }) => data)
+        return axios.post("/api/v1/application/status", {uuids}).then(({data}) => data)
     },
 }
