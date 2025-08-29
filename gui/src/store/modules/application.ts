@@ -28,7 +28,6 @@ export const useApplicationStore = defineStore("application", {
     },
     async getAllApplications(): Promise<IPagination<IApplicationOverview>> {
       this.applications.results = await applicationService.getAllApplications()
-      console.log("This application results", this.applications.results)
       return this.applications
     },
     async createApplication(payload: IApplication): Promise<IApplicationOverview> {

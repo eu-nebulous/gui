@@ -28,7 +28,6 @@ const applicationData = ref({})
 
 const updateApplication = async (applicationData: Partial<IApplication>): Promise<IApplication> => {
 
-  console.log("Application Data", applicationData)
   return await applicationStore.validateApplication(applicationData).then(async () => {
     return await applicationStore.editApplication(props.appUuid, applicationData).then((application) => {
       uiStore.setSnackbarMessage({
@@ -43,7 +42,6 @@ const updateApplication = async (applicationData: Partial<IApplication>): Promis
 
 const getApplicationData = async () => {
   applicationStore.getApplication(props.appUuid).then((application) => {
-    console.log(application)
     applicationData.value = application
   })
 }
