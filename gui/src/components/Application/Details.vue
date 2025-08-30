@@ -14,21 +14,23 @@
       <transition name="expand">
         <div class="flex flex-col gap-y-3" v-if="generateAi">
           <div class="flex flex-row">
-            <h3 class="flex-grow font-bold ">Describe you application
+            <h3 class="flex-grow font-bold ">Describe your application
             </h3>
             <span class="h-3">
 
             </span>
           </div>
-
           <FormTextarea
               rows="10"
-              class="mb-10"
               v-model="aiPrompt"
               :class="{
                 'input--invalid': aiError
               }"
           />
+          <Button @click="generateKubevela" variant="outline-success"  :disabled="loadingAi">
+            <span class="me-3">Generate</span>
+            <LoadingIcon icon="circles"  v-if="loadingAi"/>
+          </Button>
         </div>
       </transition>
       <MonacoEditor
@@ -290,8 +292,6 @@ const generateKubevela = async () => {
   console.log("Generate Kubevela ",aiPrompt.value,aiPrompt.value.length, state.yamlValue)
   loadingAi.value = false
 }
-
-watch(aiPrompt,debounce(generateKubevela,300))
 
 
 const hasBackendError = (path: string) => {
