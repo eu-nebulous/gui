@@ -3,6 +3,7 @@ import applicationService from "@/store/api-services/application.service.ts"
 import {IApplication, IApplicationOverview} from "@/interfaces/application.interface.ts"
 import {useUIStore} from "@/store/modules/ui.ts"; // Import the UI store
 import {SNACKBAR_MESSAGE_TYPES} from "@/constants";
+import {ISLOCompositeExpression} from "@/interfaces/sloviolation.interface.ts";
 
 interface ApplicationState {
   applications: IPagination<IApplicationOverview>
@@ -28,7 +29,6 @@ export const useApplicationStore = defineStore("application", {
     },
     async getAllApplications(): Promise<IPagination<IApplicationOverview>> {
       this.applications.results = await applicationService.getAllApplications()
-      console.log("This application results", this.applications.results)
       return this.applications
     },
     async createApplication(payload: IApplication): Promise<IApplicationOverview> {

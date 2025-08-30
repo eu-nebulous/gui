@@ -27,10 +27,10 @@ const props = defineProps<{
 const applicationData = ref({})
 
 const updateApplication = async (applicationData: Partial<IApplication>): Promise<IApplication> => {
-
-  console.log("Application Data", applicationData)
   return await applicationStore.validateApplication(applicationData).then(async () => {
+    console.log("Validated application", applicationData)
     return await applicationStore.editApplication(props.appUuid, applicationData).then((application) => {
+      console.log("Saved application", application)
       uiStore.setSnackbarMessage({
         message: `Successfully edited application ${application.title}`,
         type: SNACKBAR_MESSAGE_TYPES.SUCCESS
@@ -43,7 +43,7 @@ const updateApplication = async (applicationData: Partial<IApplication>): Promis
 
 const getApplicationData = async () => {
   applicationStore.getApplication(props.appUuid).then((application) => {
-    console.log(application)
+    console.log("Got Application ", application)
     applicationData.value = application
   })
 }
