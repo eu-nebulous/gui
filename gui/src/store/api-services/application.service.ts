@@ -46,6 +46,7 @@ export default {
                 content: application.content,
                 status: application.status,
                 uuid: application.uuid,
+                policy: application.policy,
                 variables: application.variables.map(({name, lowerValue, higherValue}: IVariable) => ({
                     name,
                     lowerValue,
