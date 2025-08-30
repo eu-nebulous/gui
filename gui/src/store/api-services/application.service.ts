@@ -8,11 +8,17 @@ import {IParameter} from "@/interfaces/parameter.interface.ts"
 import {IMetricComposite, IMetricRaw} from "@/interfaces/metrics.interface.ts"
 import {IUtilityFunction} from "@/interfaces/utilityFunctions.interface.ts"
 import {IEnvironment} from "@/interfaces/environment.interface.ts";
+import {v4 as v4uuid} from "uuid"
+import {ISLOCompositeExpression} from "@/interfaces/sloviolation.interface.ts";
 
 export default {
     async validateApplication(payload: Partial<IApplication>): Promise<boolean> {
         return axios.post("/api/v1/application/validate", payload).then(({data}) => data)
     },
+    async validateMetaConstraints(slMetaConstraints: ISLOCompositeExpression): Promise<boolean> {
+        return axios.post("/api/v1/application/validate-constraints", slMetaConstraints).then(({data}) => data)
+    },
+
     async getMathParsedVariables(payload: { equation: string }): Promise<{ variables: Array<string> }> {
         return axios.post("/api/v1/mathparser/expression", payload).then(({data}) => data)
     },
@@ -33,7 +39,8 @@ export default {
     async getApplication(uuid: string): Promise<IApplication> {
         return axios.get(`/api/v1/application/${uuid}/uuid`).then(response => {
             const application: any = response.data
-            console.log("getApplication ", application)
+
+            console.log("Go Application from Service", application)
             return {
                 title: application.title,
                 content: application.content,
@@ -109,6 +116,31 @@ export default {
                     typeof application.sloViolations === "string"
                         ? JSON.parse(application.sloViolations)
                         : application.sloViolations,
+
+                slCreations:
+                    !application.slCreations ?
+                     {
+                      nodeKey: v4uuid(),
+                      isComposite: true,
+                      condition: "AND",
+                      not: false,
+                      children: []
+                    } :
+                    typeof application.slCreations === "string"
+                        ? JSON.parse(application.slCreations)
+                        : application.slCreations,
+                slMetaConstraints:
+                    !application.slMetaConstraints ?
+                         {
+                          nodeKey: v4uuid(),
+                          isComposite: true,
+                          condition: "AND",
+                          not: false,
+                          children: []
+                        } :
+                        typeof application.slMetaConstraints === "string"
+                            ? JSON.parse(application.slMetaConstraints)
+                                : application.slMetaConstraints,
                 utilityFunctions: application.utilityFunctions.map(
                     ({
                          functionName,

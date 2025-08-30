@@ -42,14 +42,13 @@
         }"
       />
     </div>
-    <div class="flex flex-col">
+    <div class="flex flex-col gap-y-3">
       <div class="flex flex-col space-y-6 2xl:h-0 flex-grow overflow-y-auto">
         <div class="box p-5 flex flex-col">
           <div class="flex items-center mb-4">
             <span class="text-xl flex mr-5"> Keys </span>
             <Lucide icon="PlusCircle" @click="addVariable"/>
           </div>
-
           <Table class="min-w-full max-w-max w-max" bordered hover>
             <Table.Thead>
               <Table.Tr>
@@ -185,6 +184,22 @@
           </Table>
         </div>
       </div>
+      <div class="flex flex-col space-y-6 2xl:h-0 flex-grow overflow-y-auto">
+        <div class="box p-5 flex flex-col">
+          <div class="flex items-center mb-4">
+            <span class="text-xl flex mr-5"> Policy </span>
+          </div>
+                <MonacoEditor
+              id="policy_editor"
+              v-model="state.policy"
+              class="min-h-[100px]"
+              language="json"
+              :class="{
+              'input--invalid': v$.yamlValue?.$error || hasBackendError(`policy`)
+            }"
+          />
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -210,6 +225,7 @@ import LoadingIcon from "@/base-components/LoadingIcon";
 interface DetailsProps {
   payload: {
     content: string
+    policy: string
     variables: Array<IVariable>
     environmentVariables: Array<IEnvironment>
   }
@@ -218,6 +234,7 @@ const pathsWithError = inject<Ref<Array<string>>>("pathsWithError")
 const props = withDefaults(defineProps<DetailsProps>(), {
   payload: () => ({
     content: "",
+    policy: "",
     variables: [{name: "", lowerValue: 0, higherValue: 0}],
     environmentVariables: [{name: "", value: "", secret: false}]
   })
@@ -243,7 +260,8 @@ const environmentVariablesCollectionRules = {
 const state = reactive({
   yamlValue: props.payload.content,
   variables: props.payload.variables,
-  environmentVariables: props.payload.environmentVariables
+  environmentVariables: props.payload.environmentVariables,
+  policy: props.payload.policy,
 })
 
 const autocompleteOptions = ref<Array<{ label: string; value: string }>>([])
@@ -277,6 +295,7 @@ watch(aiPrompt,debounce(generateKubevela,300))
 
 
 const hasBackendError = (path: string) => {
+  console.log("Error in path", path)
   if (!pathsWithError?.value) return false
   return pathsWithError.value.includes(path)
 }
@@ -309,6 +328,7 @@ defineExpose({
   variables: computed(() => state.variables),
   environmentVariables: computed(() => state.environmentVariables),
   content: computed(() => state.yamlValue),
+  policy: computed(() => state.policy),
   componentV$: computed(() => v$)
 })
 

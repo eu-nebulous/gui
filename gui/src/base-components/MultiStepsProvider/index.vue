@@ -23,7 +23,7 @@
             :href="cfsbUrl"
             v-if="!loading && cfsbUrl && appId != ''"
             target="_blank"
-        >CFSB - {{appId}}</a>
+        >CFSB</a>
         <Button variant="primary" class="ml-auto w-36"
                 :disabled="loading"
                 @click="onSaveClick"

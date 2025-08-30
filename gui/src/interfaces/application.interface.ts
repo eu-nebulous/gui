@@ -10,6 +10,7 @@ import {IEnvironment} from "@/interfaces/environment.interface.ts";
 export interface IApplication {
   title: string
   content: string
+  policy: string
   status: string
   uuid: string
   templates: Array<ITemplate>
@@ -19,6 +20,8 @@ export interface IApplication {
   environmentVariables: Array<IEnvironment>
   resources: Array<IAppResource>
   sloViolations: string | ISLOCompositeExpression
+  slCreations: string | ISLOCompositeExpression
+  slMetaConstraints: string | ISLOCompositeExpression
   utilityFunctions: Array<IUtilityFunction>
 }
 

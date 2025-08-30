@@ -60,7 +60,7 @@ const initMonacoEditor = () => {
   editorInstance = monaco.editor.create(editorRef.value, {
     value: props.modelValue,
     language: props.language,
-    theme: "vs-dark-custom-theme",
+    theme: "vs-dark",
     fontSize: props.fontSize,
     automaticLayout: props.autoLayout,
     minimap: { enabled: props.withMinimap }

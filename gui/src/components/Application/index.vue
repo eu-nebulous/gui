@@ -48,10 +48,6 @@ import {ITemplate} from "@/interfaces/template.interface.ts"
 import {IParameter} from "@/interfaces/parameter.interface.ts"
 import {AxiosError} from "axios"
 import {IEnvironment} from "@/interfaces/environment.interface.ts";
-import Button from "@/base-components/Button";
-import userService from "@/store/api-services/user.service.ts";
-import {useUserStore} from "@/store/modules/user.ts";
-import FileIcon from "@/base-components/FileIcon";
 
 
 interface ApplicationProps {
@@ -94,7 +90,10 @@ const props = withDefaults(defineProps<ApplicationProps>(), {
         }
       }
     ],
+    policy:'',
     sloViolations: { nodeKey: uuid(), isComposite: true, condition: "AND", not: false, children: [] },
+    slCreations: { nodeKey: uuid(), isComposite: true, condition: "AND", not: false, children: [] },
+    slMetaConstraints: { nodeKey: uuid(), isComposite: true, condition: "AND", not: false, children: [] },
     utilityFunctions: [
       {
         functionName: "",
@@ -127,7 +126,7 @@ provide<Ref<Array<string>>>("pathsWithError", pathsWithError)
 const stageDataKeys = {
   [STAGES.APP_DETAILS]: ["content", "variables","environmentVariables"],
   [STAGES.APP_RESOURCES]: ["resources"],
-  [STAGES.APP_METRICS]: ["templates", "parameters", "metrics", "sloViolations"],
+  [STAGES.APP_METRICS]: ["templates", "parameters", "metrics", "sloViolations","slCreations","slMetaConstraints"],
   [STAGES.APP_EXPRESSION_EDITOR]: ["utilityFunctions"]
 }
 
@@ -162,15 +161,18 @@ const updateStagesData = () => {
       previous: null,
       onNextPageClick: async (
         next: () => void,
-        { content, variables, environmentVariables }: { content: string; variables: Array<IVariable>; environmentVariables:Array<IEnvironment> }
+        { content, variables, policy, environmentVariables }: { content: string; variables: Array<IVariable>; policy:string; environmentVariables:Array<IEnvironment> }
       ) => {
 
         applicationData.content = content
         applicationData.variables = variables
+        applicationData.policy = policy
         applicationData.environmentVariables = environmentVariables
+
         const stepPayload = {
           title: applicationData.title,
           content: applicationData.content,
+          policy: applicationData.policy,
           variables: applicationData.variables,
           environmentVariables: applicationData.environmentVariables
         }
@@ -187,6 +189,7 @@ const updateStagesData = () => {
       },
       payload: {
         content: applicationData.content,
+        policy: applicationData.policy,
         variables: applicationData.variables,
         environmentVariables: applicationData.environmentVariables
       },
@@ -245,18 +248,27 @@ const updateStagesData = () => {
           templates,
           parameters,
           metrics,
-          sloViolations
+          sloViolations,
+          slCreations,
+          slMetaConstraints,
         }: {
           templates: Array<ITemplate>
           parameters: Array<IParameter>
           metrics: Array<IMetricRaw | IMetricComposite>
           sloViolations: ISLOCompositeExpression
+          slCreations: ISLOCompositeExpression
+          slMetaConstraints: ISLOCompositeExpression
         }
       ) => {
+
+
+
         applicationData.templates = templates
         applicationData.parameters = parameters
         applicationData.metrics = metrics
         applicationData.sloViolations = sloViolations
+        applicationData.slCreations = slCreations
+        applicationData.slMetaConstraints = slMetaConstraints
 
         try {
           await applicationStore.validateApplication({
@@ -265,10 +277,13 @@ const updateStagesData = () => {
             parameters: applicationData.parameters,
             metrics: applicationData.metrics,
             sloViolations: applicationData.sloViolations,
+            slCreations: applicationData.slCreations,
+            slMetaConstraints: applicationData.slMetaConstraints,
           });
           pathsWithError.value = [];
           responseErrorMessages.value = [];
         } catch (error: any) {
+          console.log("Error Validating ",error)
           handleError(error);
         } finally {
           next(); // Always navigate to the next step
@@ -280,18 +295,24 @@ const updateStagesData = () => {
           templates,
           parameters,
           metrics,
-          sloViolations
+          sloViolations,
+          slCreations,
+          slMetaConstraints
         }: {
           templates: Array<ITemplate>
           parameters: Array<IParameter>
           metrics: Array<IMetricRaw | IMetricComposite>
           sloViolations: ISLOCompositeExpression
+          slCreations: ISLOCompositeExpression
+          slMetaConstraints: ISLOCompositeExpression
         }
       ) => {
         applicationData.templates = templates
         applicationData.parameters = parameters
         applicationData.metrics = metrics
         applicationData.sloViolations = sloViolations
+        applicationData.slCreations = slCreations
+        applicationData.slMetaConstraints = slMetaConstraints
 
         try {
           await applicationStore.validateApplication({
@@ -300,6 +321,8 @@ const updateStagesData = () => {
             parameters: applicationData.parameters,
             metrics: applicationData.metrics,
             sloViolations: applicationData.sloViolations,
+            slCreations: applicationData.slCreations,
+            slMetaConstraints: applicationData.slMetaConstraints,
           });
           pathsWithError.value = [];
           responseErrorMessages.value = [];
@@ -314,7 +337,9 @@ const updateStagesData = () => {
         templates: applicationData.templates,
         parameters: applicationData.parameters,
         metrics: applicationData.metrics,
-        sloViolations: applicationData.sloViolations
+        sloViolations: applicationData.sloViolations,
+        slCreations: applicationData.slCreations,
+        slMetaConstraints: applicationData.slMetaConstraints,
       },
       hasError: pathsWithError.value.some((path) =>
         stageDataKeys[STAGES.APP_METRICS].some((keys) => path.includes(keys))
@@ -379,11 +404,23 @@ const updateStagesData = () => {
 
 const saveClickHandler = (data: Partial<IApplication>) => {
   loadingStatus.value = 'loading'
+
+  console.log("Application Data", applicationData)
+  console.log("Data", data)
+
   const appPayload = Object.assign(applicationData, data)
   appPayload.sloViolations =
     typeof applicationData.sloViolations !== "string"
       ? JSON.stringify(applicationData.sloViolations)
       : applicationData.sloViolations
+  appPayload.slCreations =
+    typeof applicationData.slCreations !== "string"
+      ? JSON.stringify(applicationData.slCreations)
+      : applicationData.slCreations
+  appPayload.slMetaConstraints =
+    typeof applicationData.slMetaConstraints !== "string"
+      ? JSON.stringify(applicationData.slMetaConstraints)
+      : applicationData.slMetaConstraints
 
   props.applicationApiCall(appPayload).catch(handleError).finally(()=>{
     loadingStatus.value = 'done'
