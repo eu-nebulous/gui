@@ -19,6 +19,23 @@
         placeholder="Application name"
         :class="{ 'input--invalid': v$.title?.$error || hasTitleBackendSideError }"
       />
+      <div class="flex space-x-2">
+          <p class="cursor-pointer rounded-full px-2 py-2 mx-2 text-xs font-medium text-white inline-block"
+             :class="applicationData.status == 'draft' ? 'bg-gray-700' :
+                          applicationData.status == 'deploying' ? 'bg-primary' :
+                            applicationData.status == 'ready' ? 'bg-success' :
+                              applicationData.status == 'running' ? 'bg-amber-300 text-black' :
+                                applicationData.status == 'running' ? 'bg-amber-300 text-black' :
+                                  applicationData.status =='failed' ? 'bg-danger' :
+                                    applicationData.status =='undeploying' ? 'bg-red-400' : ''"
+             v-if="applicationData.status">
+            {{ applicationData.status }}
+          </p>
+          <p class="cursor-pointer rounded-full px-2 py-2 mx-2 text-xs  dark:bg-darkmode-800 font-medium text-white inline-block"
+             v-if="!applicationData.status">
+            unknown
+          </p>
+        </div>
     </template>
   </MultiStepsProvider>
 </template>
