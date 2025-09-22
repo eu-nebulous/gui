@@ -143,9 +143,9 @@ import {useRouter} from "vue-router"
 import {useApplicationStore} from "@/store/modules/application.ts"
 import {useUIStore} from "@/store/modules/ui.ts"
 import BaseChart from "@/base-components/Chart"
+import Card from "@/base-components/Card/Card.vue"
 import {IApplication, IApplicationOverview} from "@/interfaces/application.interface.ts"
 import {ProgressBar} from "@/base-components/Chart"
-import Card from "@/base-components/Card/Card.vue"
 import Button from "@/base-components/Button"
 import {
   violationsLineChartConfig,
@@ -277,4 +277,38 @@ onBeforeUnmount(() => {
   applicationStore.stopPolling();
 });
 
+const deploymentsDiagramConfig = (data: Array<object> = []) => {
+  // Always use mock data, ignoring the input parameter
+  const chartData = mockData.deployments
+
+  const firstDataset: Array<number> = []
+  const secondDataset: Array<number> = []
+
+  chartData.forEach((item: object) => {
+    firstDataset.push(Object.values(item)[0])
+    secondDataset.push(Object.values(item)[1])
+  })
+
+  return {
+    labels: chartData.map((_, index) => `Deploy ${index + 1}`),
+    datasets: [
+      {
+        label: "Successful",
+        data: firstDataset,
+        backgroundColor: pastelColors.success,
+        borderColor: pastelColors.success,
+        borderWidth: 1,
+        stack: "Stack 0"
+      },
+      {
+        label: "Failed",
+        data: secondDataset,
+        backgroundColor: pastelColors.danger,
+        borderColor: pastelColors.danger,
+        borderWidth: 1,
+        stack: "Stack 0"
+      }
+    ]
+  }
+}
 </script>

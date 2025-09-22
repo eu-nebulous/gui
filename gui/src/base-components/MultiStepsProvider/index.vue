@@ -137,7 +137,7 @@
       </div>
     </div>
     </div>
-    <div class="my-6 h-full block border border-red-50" v-if="isGraphActive">
+    <div class="my-6 h-full block border " v-if="isGraphActive">
       <ApplicationMonitoring :uuid="props.appId"/>
     </div>
   </div>
@@ -155,7 +155,7 @@ import Alert from "@/base-components/Alert/Alert.vue"
 import { IApplication } from "@/interfaces/application.interface.ts"
 import {useUserStore} from "@/store/modules/user.ts";
 import LoadingIcon from "@/base-components/LoadingIcon";
-import ApplicationMonitoring from "@/base-components/MultiStepsProvider/ApplicationMonitoring.vue";
+import ApplicationMonitoring from "@/containers/Applications/Overview/ApplicationMonitoring.vue";
 
 const router = useRouter()
 const userStore = useUserStore()
@@ -288,6 +288,7 @@ const isGraphActive = ref<boolean>(false)
 
 const onGraphClick = () => {
   isGraphActive.value = !isGraphActive.value;
+
 }
 
 const onSaveClick = async () => {

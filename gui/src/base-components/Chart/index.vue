@@ -28,6 +28,7 @@ export type ProvideChart = (el: ChartElement) => void
 interface ChartProps extends /* @vue-ignore */ CanvasHTMLAttributes, /* @vue-ignore */ ChartConfiguration {
   width?: number
   height?: number
+  animate?: number
   type: ChartConfiguration["type"]
   data: ChartConfiguration["data"]
   options?: ChartConfiguration["options"]
@@ -62,6 +63,7 @@ const bindInstance = (el: ChartElement) => {
 const defaultOptions = computed<ChartOptions>(() => {
   return {
     maintainAspectRatio: false,
+    animation:false,
     plugins: {
       legend: {
         display: false
