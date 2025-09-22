@@ -9,7 +9,6 @@
     :v$="v$"
     :appId="applicationData.uuid"
     :loading="loadingStatus == 'loading'"
-    :graph-enabled="applicationData.status == 'running'"
     :save-enabled="applicationData.status == 'draft' || applicationData.status == 'failed'"
     @saveClick="saveClickHandler"
   >
@@ -18,18 +17,17 @@
         v-model="applicationData.title"
         type="text"
         placeholder="Application name"
-        class="me-3"
         :class="{ 'input--invalid': v$.title?.$error || hasTitleBackendSideError }"
       />
-      <div class="align-middle">
-          <p class="cursor-pointer rounded-full px-6 py-1 mx-2 mt-2 text-xs font-medium align-middle"
-             :class="applicationData.status == 'draft' ? 'bg-gray-700 text-white ' :
-                          applicationData.status == 'deploying' ? 'bg-primary text-white ' :
-                            applicationData.status == 'ready' ? 'bg-success text-white ' :
+      <div class="flex space-x-2">
+          <p class="cursor-pointer rounded-full px-2 py-2 mx-2 text-xs font-medium text-white inline-block"
+             :class="applicationData.status == 'draft' ? 'bg-gray-700' :
+                          applicationData.status == 'deploying' ? 'bg-primary' :
+                            applicationData.status == 'ready' ? 'bg-success' :
                               applicationData.status == 'running' ? 'bg-amber-300 text-black' :
                                 applicationData.status == 'running' ? 'bg-amber-300 text-black' :
-                                  applicationData.status =='failed' ? 'bg-danger text-black' :
-                                    applicationData.status =='undeploying' ? 'bg-red-400 text-white ' : ''"
+                                  applicationData.status =='failed' ? 'bg-danger' :
+                                    applicationData.status =='undeploying' ? 'bg-red-400' : ''"
              v-if="applicationData.status">
             {{ applicationData.status }}
           </p>
