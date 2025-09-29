@@ -66,21 +66,12 @@
 </template>
 
 <script setup lang="ts">
-import {ref, computed, onMounted, onBeforeUnmount} from "vue";
+import {computed, onBeforeUnmount, onMounted, ref} from "vue";
 import {useRouter} from "vue-router"
 import {useApplicationStore} from "@/store/modules/application.ts"
 import {useUIStore} from "@/store/modules/ui.ts"
-import BaseChart from "@/base-components/Chart"
-import Card from "@/base-components/Card/Card.vue"
 import {IApplication, IApplicationOverview} from "@/interfaces/application.interface.ts"
-import {ProgressBar} from "@/base-components/Chart"
 import Button from "@/base-components/Button"
-import {
-  violationsLineChartConfig,
-  deploymentsDiagramConfig,
-  reconfigDiagramConfig,
-  latencyLineChartConfig
-} from "./applicationChartsConfigs.ts"
 import Lucide from "@/base-components/Lucide/Lucide.vue"
 import {MODAL_WINDOW_NAMES, SNACKBAR_MESSAGE_TYPES} from "@/constants"
 import Input from "@/base-components/Form/FormInput.vue";
@@ -93,16 +84,16 @@ const applicationQuery = ref<String>('')
 
 const applications = computed<Array<IApplicationOverview>>(() => {
 
-  const q =applicationQuery.value.trim()
-  if(!q) applicationStore.applications.results
+  const q = applicationQuery.value.trim()
+  if (!q) applicationStore.applications.results
 
-  const matches = applicationStore.applications.results.filter((a) => a.title.indexOf(q) >=0 )
+  const matches = applicationStore.applications.results.filter((a) => a.title.indexOf(q) >= 0)
 
   console.log("Matches", matches)
   return matches
 
 
-} )
+})
 
 
 const applicatonGraph = ref<Array<String>>([])
@@ -204,7 +195,6 @@ onMounted(() => {
 onBeforeUnmount(() => {
   applicationStore.stopPolling();
 });
-
 
 
 </script>
