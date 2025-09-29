@@ -61,78 +61,6 @@
         </div>
       </div>
 
-      <div class="grid xl:grid-cols-5 md:grid-cols-2 sm:grid-cols-1 gap-10 mt-6 "
-           v-if="isApplicationGraphShowing(application)">
-        <!-- BEGIN: LATENCY -->
-        <Card class="flex flex-col flex-grow items-center justify-between h-60" animate>
-          <div class="mr-auto">
-            <h2 class="text-base">Latency</h2>
-            <!--            <h2 class="text-2xl">{{ application.latency || 0 }} MS</h2>-->
-            <h2 class="text-2xl">132 MS</h2>
-          </div>
-          <BaseChart
-              type="line"
-              :height="120"
-              :width="180"
-              :data="latencyLineChartConfig(application.latency)"
-          />
-        </Card>
-        <!-- END: LATENCY -->
-        <!-- BEGIN: RECONFIGURATION -->
-        <Card class="flex flex-col flex-grow items-center justify-between h-60" animate>
-          <div class="mr-auto">
-            <h2 class="text-base">Reconfiguration</h2>
-            <!--            <h2 class="text-2xl">3</h2>-->
-            <h2 class="text-2xl">{{ application.reconfigurations || 11 }}</h2>
-          </div>
-          <BaseChart
-              type="bar"
-              :height="120"
-              :width="180"
-              :data="reconfigDiagramConfig(application.reconfigurations)"
-          />
-        </Card>
-        <!-- END: RECONFIGURATION -->
-        <!-- BEGIN: DEPLOYMENTS -->
-        <Card class="flex flex-col flex-grow items-center justify-between h-60" animate>
-          <div class="mr-auto">
-            <h2 class="text-base">Deployments</h2>
-            <h2 class="text-2xl">{{ application.deployments || 5 }}</h2>
-          </div>
-
-          <BaseChart
-              type="bar"
-              :height="120"
-              :width="180"
-              :data="deploymentsDiagramConfig(application.deployments)"
-          />
-        </Card>
-        <!-- END: DEPLOYMENTS -->
-        <!-- BEGIN: SLO VIOLATIONS -->
-        <Card class="flex flex-col flex-grow items-center justify-between h-60" animate>
-          <div class="mr-auto">
-            <h2 class="text-base">SLO violations</h2>
-            <h2 class="text-2xl">{{ application.violations || 250 }}</h2>
-          </div>
-
-          <BaseChart
-              type="line"
-              :height="120"
-              :width="180"
-              :data="violationsLineChartConfig(application.violations)"
-          />
-        </Card>
-        <!-- END: SLO VIOLATIONS  -->
-        <!-- BEGIN: STRAIN -->
-        <Card class="flex flex-col flex-grow items-center justify-between h-60" animate>
-          <div class="mr-auto">
-            <h2 class="text-base">Strain</h2>
-            <h2 class="text-2xl">3</h2>
-          </div>
-          <ProgressBar :height="120" :width="180" :progressPercentage="35"/>
-        </Card>
-      </div>
-      <!-- END: STRAIN  -->
     </div>
   </div>
 </template>
@@ -277,38 +205,6 @@ onBeforeUnmount(() => {
   applicationStore.stopPolling();
 });
 
-const deploymentsDiagramConfig = (data: Array<object> = []) => {
-  // Always use mock data, ignoring the input parameter
-  const chartData = mockData.deployments
 
-  const firstDataset: Array<number> = []
-  const secondDataset: Array<number> = []
 
-  chartData.forEach((item: object) => {
-    firstDataset.push(Object.values(item)[0])
-    secondDataset.push(Object.values(item)[1])
-  })
-
-  return {
-    labels: chartData.map((_, index) => `Deploy ${index + 1}`),
-    datasets: [
-      {
-        label: "Successful",
-        data: firstDataset,
-        backgroundColor: pastelColors.success,
-        borderColor: pastelColors.success,
-        borderWidth: 1,
-        stack: "Stack 0"
-      },
-      {
-        label: "Failed",
-        data: secondDataset,
-        backgroundColor: pastelColors.danger,
-        borderColor: pastelColors.danger,
-        borderWidth: 1,
-        stack: "Stack 0"
-      }
-    ]
-  }
-}
 </script>
