@@ -195,4 +195,7 @@ export default {
     async checkApplicationStatus(uuids: string[]): Promise<Array<{ uuid: string; status: string }>> {
         return axios.post("/api/v1/application/status", {uuids}).then(({data}) => data)
     },
+    async getMonitoringData(uuid: string): Promise<Array<any>> {
+        return axios.get(`/api/v1/application/${uuid}/monitor/data`).then(({data}) => data)
+    },
 }

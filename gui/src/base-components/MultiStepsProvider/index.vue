@@ -14,20 +14,34 @@
           <Lucide icon="ArrowLeft" class="w-5 h-5 mr-2" />
           Back
         </Button>
-        <div class="hidden md:flex w-full max-w-4xl mr-8">
+        <div class="hidden md:flex w-full me-7">
           <slot name="title" />
         </div>
         <div class="ml-auto" v-if="!saveEnabled">
         </div>
-        <a class='button rounded dark:border-primary hover:bg-slate-700 border border-white p-2 hover:cursor-pointer inline-block mx-3'
+        <a class='button rounded dark:border-primary hover:bg-slate-700 border border-white p-2 hover:cursor-pointer inline-block me-3 '
             :href="cfsbUrl"
             v-if="!loading && cfsbUrl && appId != ''"
             target="_blank"
         >CFSB</a>
-        <Button variant="primary" class="ml-auto w-36"
+        <a class='button rounded dark:border-primary hover:bg-slate-700 border border-white p-2 hover:cursor-pointer inline-block me-3 '
+            :href="deviceRegistrationUrl"
+            v-if="!loading && deviceRegistrationUrl && appId != ''"
+            target="_blank"
+        >Edge</a>
+
+        <Button variant="primary"
+                class="ml-auto me-3"
+                v-if="props.graphEnabled"
+                @click="onGraphClick"
+                :disabled="loading"
+        >
+          <span><Lucide icon="ChartArea"/></span>
+        </Button>
+
+        <Button variant="primary" class="ml-auto w-36 me-3"
                 :disabled="loading"
                 @click="onSaveClick"
-
           v-if="saveEnabled"
         >
           <span v-if="!loading">Save</span>
@@ -38,7 +52,7 @@
         <Button
           v-if="currentStage.next"
           variant="primary"
-          class="ml-4 whitespace-nowrap"
+          class="whitespace-nowrap"
           @click="toNextPage({})"
           :disabled="isNextButtonDisabled"
         >
@@ -51,6 +65,7 @@
       </div>
     </div>
     <!-- END: BACK/NEXT BUTTONS LINE -->
+    <div class="flex flex-col flex-grow" v-if="!isGraphActive">
 
     <!-- BEGIN: STEPS HEADS -->
     <div class="flex flex-nowrap mt-8 mb-5 md:mb-14 relative" :class="{ 'px-10': visibleStagesHeads.length < 4 }">
@@ -126,7 +141,10 @@
         </Button>
       </div>
     </div>
-    <!-- END: CANCEL BUTTONS LINE -->
+    </div>
+    <div class="my-6 h-full block border " v-if="isGraphActive">
+      <ApplicationMonitoring :uuid="props.appId"/>
+    </div>
   </div>
 </template>
 
@@ -142,6 +160,7 @@ import Alert from "@/base-components/Alert/Alert.vue"
 import { IApplication } from "@/interfaces/application.interface.ts"
 import {useUserStore} from "@/store/modules/user.ts";
 import LoadingIcon from "@/base-components/LoadingIcon";
+import ApplicationMonitoring from "@/containers/Applications/Overview/ApplicationMonitoring.vue";
 
 const router = useRouter()
 const userStore = useUserStore()
@@ -153,6 +172,7 @@ interface MultiStepsProviderProps {
   entrypointComponent: string
   returnRouteName: string
   loading: boolean,
+  graphEnabled: boolean,
   responseErrorMessages: Array<string>
   v$?: Validation
 }
@@ -220,6 +240,13 @@ const cfsbUrl = computed(()=>{
 })
 
 
+const deviceRegistrationUrl = computed(()=>{
+  console.log(import.meta.env.VITE_EDGE_API_URL+`?appId=${props.appId}&nonce=${userStore.user?.uuid}`)
+  return  import.meta.env.VITE_EDGE_API_URL+`?appId=${props.appId}&nonce=${userStore.user?.uuid}`
+})
+
+
+
 const toPreviousPage = async ({ rawNavigation }: { rawNavigation?: boolean } = {}) => {
   const { componentV$, ...data } = currentStageRef.value || {};
   const isComponentValid = !componentV$ || (await componentV$.value.$validate());
@@ -269,6 +296,12 @@ const toNextPage = async ({ rawNavigation }: { rawNavigation?: boolean } = {}) =
     }
   }
 };
+const isGraphActive = ref<boolean>(false)
+
+const onGraphClick = () => {
+  isGraphActive.value = !isGraphActive.value;
+
+}
 
 const onSaveClick = async () => {
   const { componentV$, ...data } = currentStageRef.value || {}
