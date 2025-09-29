@@ -146,8 +146,8 @@ const resources = computed<Array<IResource>>(() => resourceStore.resources.resul
 const nodeCandidates = computed<Array<INodeCandidate>>(() => resourceStore.candidates)
 
 const resourceRegistrationUrl = computed(()=>{
-  console.log(import.meta.env.VITE_EDGE_API_URL+`?nonce=${useStore.user?.uuid}&appId=all_applications`)
-  return  import.meta.env.VITE_EDGE_API_URL+`?nonce=${useStore.user?.uuid}&appId=all_applications`
+  console.log(import.meta.env.VITE_EDGE_API_URL+`?nonce=${useStore.user?.uuid}&appId=all-applications`)
+  return  import.meta.env.VITE_EDGE_API_URL+`?nonce=${useStore.user?.uuid}&appId=all-applications`
 })
 
 const currentPage = ref(1)
