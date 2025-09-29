@@ -2,7 +2,14 @@
   <div class="flex flex-col mt-8 intro-y">
     <div class="flex flex-row justify-between items-center mb-4">
       <h2 class="text-base uppercase">Resources</h2>
-      <Button variant="primary" class="uppercase" @click="openResourceCreationModal">Add resource </Button>
+      <div>
+        <a class='button text-uppercase rounded dark:border-primary hover:bg-slate-700 border border-white p-2 hover:cursor-pointer inline-block me-3 '
+            :href="resourceRegistrationUrl"
+            v-if="resourceRegistrationUrl"
+            target="_blank"
+        >Add Edge Resource </a>
+        <Button variant="primary" class="uppercase" @click="openResourceCreationModal">Add resource </Button>
+      </div>
     </div>
 
     <div class="md:box flex-grow overflow-x-auto md:p-5">
@@ -126,15 +133,22 @@ import Table from "@/base-components/Table"
 import TippyContent from "@/base-components/TippyContent/TippyContent.vue"
 import { usePagination } from "@/composables/usePagination.ts"
 import { generateColor } from "@/utils/colors.ts"
+import {useUserStore} from "@/store/modules/user.ts";
 
 
 
 
 const resourceStore = useResourceStore()
 const uiStore = useUIStore()
+const useStore = useUserStore()
 
 const resources = computed<Array<IResource>>(() => resourceStore.resources.results)
 const nodeCandidates = computed<Array<INodeCandidate>>(() => resourceStore.candidates)
+
+const resourceRegistrationUrl = computed(()=>{
+  console.log(import.meta.env.VITE_EDGE_API_URL+`?nonce=${useStore.user?.uuid}&appId=all_applications`)
+  return  import.meta.env.VITE_EDGE_API_URL+`?nonce=${useStore.user?.uuid}&appId=all_applications`
+})
 
 const currentPage = ref(1)
 

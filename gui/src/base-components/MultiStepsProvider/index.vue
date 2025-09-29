@@ -24,6 +24,11 @@
             v-if="!loading && cfsbUrl && appId != ''"
             target="_blank"
         >CFSB</a>
+        <a class='button rounded dark:border-primary hover:bg-slate-700 border border-white p-2 hover:cursor-pointer inline-block me-3 '
+            :href="deviceRegistrationUrl"
+            v-if="!loading && deviceRegistrationUrl && appId != ''"
+            target="_blank"
+        >Edge</a>
 
         <Button variant="primary"
                 class="ml-auto me-3"
@@ -34,7 +39,7 @@
           <span><Lucide icon="ChartArea"/></span>
         </Button>
 
-        <Button variant="primary" class="ml-auto w-36"
+        <Button variant="primary" class="ml-auto w-36 me-3"
                 :disabled="loading"
                 @click="onSaveClick"
           v-if="saveEnabled"
@@ -233,6 +238,13 @@ const cfsbUrl = computed(()=>{
   console.log(import.meta.env.VITE_CFSB_API_URL+`?appId=${props.appId}&nonce=${userStore.user?.uuid}`)
   return  import.meta.env.VITE_CFSB_API_URL+`?appId=${props.appId}&nonce=${userStore.user?.uuid}`
 })
+
+
+const deviceRegistrationUrl = computed(()=>{
+  console.log(import.meta.env.VITE_EDGE_API_URL+`?appId=${props.appId}&nonce=${userStore.user?.uuid}`)
+  return  import.meta.env.VITE_EDGE_API_URL+`?appId=${props.appId}&nonce=${userStore.user?.uuid}`
+})
+
 
 
 const toPreviousPage = async ({ rawNavigation }: { rawNavigation?: boolean } = {}) => {
