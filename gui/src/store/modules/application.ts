@@ -117,6 +117,7 @@ export const useApplicationStore = defineStore("application", {
                 console.log(`Monitoring deploying/undeploying applications. ${this.monitorUuid}`);
                 try {
                     this.monitorData = await applicationService.getMonitoringData(this.monitorUuid);
+                    console.log(`Monitoring deploying/undeploying applications. ${this.monitorData}`);
                     } catch (err) {
                     console.log(err);
                 }
