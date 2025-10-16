@@ -33,7 +33,7 @@ import BaseChart from "@/base-components/Chart"
 import Card from "@/base-components/Card/Card.vue"
 
 interface AppMonitoringProps {
-  uuid: string,
+  uuid: string
 }
 
 const props = defineProps<AppMonitoringProps>()
