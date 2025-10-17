@@ -1,17 +1,32 @@
 <template>
   <div class="flex flex-col mt-8 space-y-10 intro-y">
-    <div class="flex justify-end">
-      <Button variant="primary" type="button" @click="redirectToAppCreation"> Add Application</Button>
+    <div class="flex">
+      <div class="flex  grow me-5">
+        <Input
+            v-model="applicationQuery"
+            type="text"
+            placeholder="Search Application"
+        />
+      </div>
+      <div class="flex  justify-end">
+        <Button variant="primary" type="button" @click="redirectToAppCreation"> Add Application</Button>
+      </div>
     </div>
+
     <div v-for="application in applications" :key="application.uuid" class="flex flex-col">
       <div class="flex items-center justify-between">
-        <div class="block">
+        <div class="grow block">
           <p
-              class="text-3xl capitalize hover:underline hover:cursor-pointer inline-block  align-middle"
+              class="text-3xl capitalize hover:underline hover:cursor-pointer inline-block pe-3"
               @click="toApplicationEditing(application)"
           >
-            {{ application.title }}
+            {{
+              application.title.length > 70 ?
+                  application.title.substring(0, 67) + " ..." : application.title
+            }}
           </p>
+        </div>
+        <div class="flex space-x-2">
           <p class="cursor-pointer rounded-full px-2 py-2 mx-2 text-xs font-medium text-white inline-block"
              :class="application.status == 'draft' ? 'bg-gray-700' :
                           application.status == 'deploying' ? 'bg-primary' :
@@ -21,7 +36,7 @@
                                   application.status =='failed' ? 'bg-danger' :
                                     application.status =='undeploying' ? 'bg-red-400' : ''"
              v-if="application.status">
-            {{application.status}}
+            {{ application.status }}
           </p>
           <p class="cursor-pointer rounded-full px-2 py-2 mx-2 text-xs  dark:bg-darkmode-800 font-medium text-white inline-block"
              v-if="!application.status">
@@ -29,119 +44,62 @@
           </p>
         </div>
         <div class="flex space-x-2">
-          <Lucide v-if="application.status=='draft' || application.status=='failed'  || application.status=='ready' || !application.status"  icon="PlayCircle" class="w-10 text-white" @click="deployApplication(application)" />
-          <Lucide v-if="application.status=='draft' || application.status=='failed' || application.status=='ready' || !application.status" icon="Pencil" class="w-10 text-warning" @click="toApplicationEditing(application)" />
-          <Lucide v-if="application.status == 'deployed'  || !application.status" icon="Unlock" class="w-10 text-alert"  @click="undeployApplication(application)" />
-          <Lucide icon="Copy" class="w-10 text-info" @click="duplicateApplication(application)" />
-          <Lucide v-if="application.status=='draft' || application.status=='failed' || application.status=='ready' || !application.status" icon="Trash2" class="w-10 text-danger" @click="removeApplication(application.uuid)" />
+          <Lucide
+              v-if="application.status=='draft' || application.status=='failed'  || application.status=='ready' || !application.status"
+              icon="PlayCircle" class="w-10 text-white" @click="deployApplication(application)"/>
+          <Lucide v-if="application.status=='running'" icon="ChartArea" class="w-10 text-white"
+                  @click="showApplicationGraph(application)"/>
+          <Lucide
+              v-if="application.status=='draft' || application.status=='failed' || application.status=='ready' || !application.status"
+              icon="Pencil" class="w-10 text-warning" @click="toApplicationEditing(application)"/>
+          <Lucide v-if="application.status == 'deployed'  || !application.status" icon="Unlock" class="w-10 text-alert"
+                  @click="undeployApplication(application)"/>
+          <Lucide icon="Copy" class="w-10 text-info" @click="duplicateApplication(application)"/>
+          <Lucide
+              v-if="application.status=='draft' || application.status=='failed' || application.status=='ready' || !application.status"
+              icon="Trash2" class="w-10 text-danger" @click="removeApplication(application.uuid)"/>
         </div>
       </div>
 
-      <div class="grid xl:grid-cols-5 md:grid-cols-2 sm:grid-cols-1 gap-10 mt-6 hidden">
-        <!-- BEGIN: LATENCY -->
-        <Card class="flex flex-col flex-grow items-center justify-between h-60" animate>
-          <div class="mr-auto">
-            <h2 class="text-base">Latency</h2>
-            <h2 class="text-2xl">{{ application.latency || 0 }} MS</h2>
-          </div>
-          <BaseChart
-              v-if="application.latency"
-              type="line"
-              :height="120"
-              :width="180"
-              :data="latencyLineChartConfig(application.latency)"
-          />
-        </Card>
-        <!-- END: LATENCY -->
-        <!-- BEGIN: RECONFIGURATION -->
-        <Card class="flex flex-col flex-grow items-center justify-between h-60" animate>
-          <div class="mr-auto">
-            <h2 class="text-base">Reconfiguration</h2>
-            <h2 class="text-2xl">{{ application.reconfigurations || 0 }}</h2>
-          </div>
-          <BaseChart
-              v-if="application.reconfigurations"
-              type="bar"
-              :height="120"
-              :width="180"
-              :data="reconfigDiagramConfig(application.reconfigurations)"
-          />
-        </Card>
-        <!-- END: RECONFIGURATION -->
-        <!-- BEGIN: DEPLOYMENTS -->
-        <Card class="flex flex-col flex-grow items-center justify-between h-60" animate>
-          <div class="mr-auto">
-            <h2 class="text-base">Deployments</h2>
-            <h2 class="text-2xl">{{ application.deployments || 0 }}</h2>
-          </div>
-
-          <BaseChart
-              v-if="application.deployments"
-              type="bar"
-              :height="120"
-              :width="180"
-              :data="deploymentsDiagramConfig(application.deployments)"
-          />
-        </Card>
-        <!-- END: DEPLOYMENTS -->
-        <!-- BEGIN: SLO VIOLATIONS -->
-        <Card class="flex flex-col flex-grow items-center justify-between h-60" animate>
-          <div class="mr-auto">
-            <h2 class="text-base">SLO violations</h2>
-            <h2 class="text-2xl">{{ application.violations || 0 }}</h2>
-          </div>
-
-          <BaseChart
-              v-if="application.violations"
-              type="line"
-              :height="120"
-              :width="180"
-              :data="violationsLineChartConfig(application.violations)"
-          />
-        </Card>
-        <!-- END: SLO VIOLATIONS  -->
-        <!-- BEGIN: STRAIN -->
-        <Card class="flex flex-col flex-grow items-center justify-between h-60" animate>
-          <div class="mr-auto">
-            <h2 class="text-base">Strain</h2>
-            <h2 v-if="!application.strain" class="text-2xl">0</h2>
-          </div>
-          <ProgressBar v-if="application.strain" :height="120" :width="180" :progressPercentage="application.strain" />
-        </Card>
-      </div>
-      <!-- END: STRAIN  -->
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, onBeforeUnmount } from "vue";
-import { useRouter } from "vue-router"
-import { useApplicationStore } from "@/store/modules/application.ts"
-import { useUIStore } from "@/store/modules/ui.ts"
-import BaseChart from "@/base-components/Chart"
+import {computed, onBeforeUnmount, onMounted, ref} from "vue";
+import {useRouter} from "vue-router"
+import {useApplicationStore} from "@/store/modules/application.ts"
+import {useUIStore} from "@/store/modules/ui.ts"
 import {IApplication, IApplicationOverview} from "@/interfaces/application.interface.ts"
-import { ProgressBar } from "@/base-components/Chart"
-import Card from "@/base-components/Card/Card.vue"
 import Button from "@/base-components/Button"
-import {
-  violationsLineChartConfig,
-  deploymentsDiagramConfig,
-  reconfigDiagramConfig,
-  latencyLineChartConfig
-} from "./applicationChartsConfigs.ts"
 import Lucide from "@/base-components/Lucide/Lucide.vue"
-import { MODAL_WINDOW_NAMES, SNACKBAR_MESSAGE_TYPES } from "@/constants"
+import {MODAL_WINDOW_NAMES, SNACKBAR_MESSAGE_TYPES} from "@/constants"
+import Input from "@/base-components/Form/FormInput.vue";
 
 const router = useRouter()
 const applicationStore = useApplicationStore()
 const uiStore = useUIStore()
 
-const applications = computed<Array<IApplicationOverview>>(() => applicationStore.applications.results)
+const applicationQuery = ref<String>('')
 
+const applications = computed<Array<IApplicationOverview>>(() => {
+
+  const q = applicationQuery.value.trim()
+  if (!q) applicationStore.applications.results
+
+  const matches = applicationStore.applications.results.filter((a) => a.title.indexOf(q) >= 0)
+
+  console.log("Matches", matches)
+  return matches
+
+
+})
+
+
+const applicatonGraph = ref<Array<String>>([])
 
 const redirectToAppCreation = () => {
-  router.push({ name: "application-creation" })
+  router.push({name: "application-creation"})
 }
 
 const removeApplication = (uuid: string) => {
@@ -156,20 +114,36 @@ const removeApplication = (uuid: string) => {
           })
         })
       },
-      cancelAction: () => {}
+      cancelAction: () => {
+      }
     }
   })
 }
 
 const toApplicationEditing = (application: IApplication) => {
-  router.push({ name: "application", params: { appUuid: application.uuid } })
+  router.push({name: "application", params: {appUuid: application.uuid}})
 }
-const deployApplication = (application: IApplication) =>{
+const deployApplication = (application: IApplication) => {
 
   applicationStore.deployApplication(application.uuid)
-
+}
+const showApplicationGraph = (application: IApplication) => {
+  console.log(application)
+  if (applicatonGraph.value.includes(application.uuid)) {
+    applicatonGraph.value = applicatonGraph.value.filter((e) => e != application.uuid)
+  } else {
+    applicatonGraph.value.push(application.uuid)
+  }
 
 }
+
+const isApplicationGraphShowing = (application: IApplication) => {
+  console.log(applicatonGraph.value.includes(application.uuid))
+  return applicatonGraph.value.includes(application.uuid)
+
+}
+
+
 const duplicateApplication = (application: IApplication) => {
   uiStore.setModalWindowState({
     name: MODAL_WINDOW_NAMES.CONFIRM_DUPLICATION_MODAL,
@@ -188,7 +162,8 @@ const duplicateApplication = (application: IApplication) => {
           })
         })
       },
-      cancelAction: () => {}
+      cancelAction: () => {
+      }
     }
   })
 }
@@ -220,5 +195,6 @@ onMounted(() => {
 onBeforeUnmount(() => {
   applicationStore.stopPolling();
 });
+
 
 </script>

@@ -1,25 +1,56 @@
 <template>
   <div
-    class="flex flex-col flex-grow space-y-6 2xl:space-y-0 2xl:grid 2xl:grid-cols-[minmax(0px,_1fr)_1fr] 2xl:space-x-8"
+      class="flex flex-col flex-grow space-y-6 2xl:space-y-0 2xl:grid 2xl:grid-cols-[minmax(0px,_1fr)_1fr] 2xl:space-x-8"
   >
-    <MonacoEditor
-      v-model="state.yamlValue"
-      class="min-h-[400px]"
-      language="yaml"
-      id="yaml_editor"
-      @change="debouncedYamlKeySubstringSearch"
-      :class="{
-        'input--invalid': v$.yamlValue?.$error || hasBackendError(`content.`)
-      }"
-    />
-    <div class="flex flex-col">
+
+    <div class="flex flex-col gap-y-3">
+      <Button @click="toggleAi"
+              :variant="generateAi ? 'primary' : 'secondary'"  >
+        <span class="me-3">AI</span>
+        <Lucide icon="Sparkles" class="w-5 h-5 mr-2" v-if="!loadingAi"/>
+        <LoadingIcon icon="circles"  v-if="loadingAi"/>
+      </Button>
+
+      <transition name="expand">
+        <div class="flex flex-col gap-y-3" v-if="generateAi">
+          <div class="flex flex-row">
+            <h3 class="flex-grow font-bold ">Describe your application
+            </h3>
+            <span class="h-3">
+
+            </span>
+          </div>
+          <FormTextarea
+              rows="10"
+              v-model="aiPrompt"
+              :class="{
+                'input--invalid': aiError
+              }"
+          />
+          <Button @click="generateKubevela" variant="outline-success"  :disabled="loadingAi">
+            <span class="me-3">Generate</span>
+            <LoadingIcon icon="circles"  v-if="loadingAi"/>
+          </Button>
+        </div>
+      </transition>
+      <MonacoEditor
+          id="yaml_editor"
+          v-model="state.yamlValue"
+          class="min-h-[200px]"
+          language="yaml"
+          @change="debouncedYamlKeySubstringSearch"
+          :class="{
+          'input--invalid': v$.yamlValue?.$error || hasBackendError(`content.`)
+        }"
+      />
+    </div>
+    <div class="flex flex-col gap-y-3">
       <div class="flex flex-col space-y-6 2xl:h-0 flex-grow overflow-y-auto">
         <div class="box p-5 flex flex-col">
           <div class="flex items-center mb-4">
             <span class="text-xl flex mr-5"> Keys </span>
-            <Lucide icon="PlusCircle" @click="addVariable" />
+            <Lucide icon="PlusCircle" @click="addVariable"/>
           </div>
-
           <Table class="min-w-full max-w-max w-max" bordered hover>
             <Table.Thead>
               <Table.Tr>
@@ -30,10 +61,10 @@
             </Table.Thead>
             <Table.Tbody>
               <ValidateEach
-                v-for="(variable, index) in state.variables"
-                :key="index"
-                :state="variable"
-                :rules="variablesCollectionRules"
+                  v-for="(variable, index) in state.variables"
+                  :key="index"
+                  :state="variable"
+                  :rules="variablesCollectionRules"
               >
                 <template #default="{ v }">
                   <Table.Tr>
@@ -41,12 +72,12 @@
                       <div class="flex flex-col">
                         <div>
                           <VueSelect
-                            v-model="variable.name"
-                            class="w-60"
-                            :class="{
+                              v-model="variable.name"
+                              class="w-60"
+                              :class="{
                               'input--invalid': v.name?.$error || hasBackendError(`variables[${index}].name`)
                             }"
-                            :options="autocompleteOptions"
+                              :options="autocompleteOptions"
 
                           />
                         </div>
@@ -55,16 +86,16 @@
                     <Table.Td class="w-80">
                       <div class="flex space-x-4">
                         <Input
-                          v-model="variable.lowerValue"
-                          type="number"
-                          :class="{
+                            v-model="variable.lowerValue"
+                            type="number"
+                            :class="{
                             'input--invalid': v.lowerValue?.$error || hasBackendError(`variables[${index}].lowerValue`)
                           }"
                         />
                         <Input
-                          v-model="variable.higherValue"
-                          type="number"
-                          :class="{
+                            v-model="variable.higherValue"
+                            type="number"
+                            :class="{
                             'input--invalid':
                               v.higherValue?.$error || hasBackendError(`variables[${index}].higherValue`)
                           }"
@@ -72,12 +103,12 @@
                       </div>
                     </Table.Td>
                     <Table.Td>
-                      <Lucide icon="Trash2" class="basis-20 text-danger" @click="removeVariable(index)" />
+                      <Lucide icon="Trash2" class="basis-20 text-danger" @click="removeVariable(index)"/>
                     </Table.Td>
                   </Table.Tr>
                   <Table.Tr>
                     <Table.Td colspan="99" class="py-1 px-5 italic">
-                      {{variable.name}}
+                      {{ variable.name }}
                     </Table.Td>
                   </Table.Tr>
 
@@ -91,7 +122,7 @@
         <div class="box p-5 flex flex-col">
           <div class="flex items-center mb-4">
             <span class="text-xl flex mr-5"> Environment </span>
-            <Lucide icon="PlusCircle" @click="addEnvironment" />
+            <Lucide icon="PlusCircle" @click="addEnvironment"/>
           </div>
           <Table class="min-w-full max-w-max w-max" bordered hover>
             <Table.Thead>
@@ -103,10 +134,10 @@
             </Table.Thead>
             <Table.Tbody>
               <ValidateEach
-                v-for="(env, index) in state.environmentVariables"
-                :key="index"
-                :state="env"
-                :rules="environmentVariablesCollectionRules"
+                  v-for="(env, index) in state.environmentVariables"
+                  :key="index"
+                  :state="env"
+                  :rules="environmentVariablesCollectionRules"
               >
                 <template #default="{ v }">
                   <Table.Tr>
@@ -114,9 +145,9 @@
                       <div class="flex flex-col">
                         <div class="flex space-x-4">
                           <Input
-                            v-model="env.name"
-                            type="text"
-                            :class="{
+                              v-model="env.name"
+                              type="text"
+                              :class="{
                               'input--invalid': v.name?.$error || hasBackendError(`environmentVariables[${index}].name`)
                             }"
                           />
@@ -139,14 +170,14 @@
                     <Table.Td class="w-1/6">
                       <FormSwitch class="ml-auto w-auto">
                         <FormSwitch.Input id="env-{{String(index)}}-secret" v-model="env.secret" type="checkbox"
-                            :class="{
+                                          :class="{
                               'input--invalid': v.value?.$error || hasBackendError(`environmentVariables[${index}].secret`)
                             }"
                         />
                       </FormSwitch>
                     </Table.Td>
                     <Table.Td class="w-1/6">
-                      <Lucide icon="Trash2" class="basis-20 text-danger" @click="removeEnvironment(index)" />
+                      <Lucide icon="Trash2" class="basis-20 text-danger" @click="removeEnvironment(index)"/>
                     </Table.Td>
                   </Table.Tr>
                 </template>
@@ -155,12 +186,28 @@
           </Table>
         </div>
       </div>
+      <div class="flex flex-col space-y-6 2xl:h-0 flex-grow overflow-y-auto">
+        <div class="box p-5 flex flex-col">
+          <div class="flex items-center mb-4">
+            <span class="text-xl flex mr-5"> Policy </span>
+          </div>
+                <MonacoEditor
+              id="policy_editor"
+              v-model="state.policy"
+              class="min-h-[100px]"
+              language="json"
+              :class="{
+              'input--invalid': v$.yamlValue?.$error || hasBackendError(`policy`)
+            }"
+          />
+        </div>
+      </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import {computed, inject, reactive, Ref, ref} from "vue"
+import {computed, inject, reactive, Ref, ref, watch} from "vue"
 import Lucide from "@/base-components/Lucide/Lucide.vue"
 import Input from "@/base-components/Form/FormInput.vue"
 import {IVariable} from "@/interfaces/variables.interface.ts"
@@ -172,60 +219,89 @@ import {ValidateEach} from "@vuelidate/components"
 import {useVuelidate} from "@vuelidate/core"
 import MonacoEditor from "@/base-components/MonacoEditor/MonacoEditor.vue"
 import Table from "@/base-components/Table"
-import {FormSwitch} from "@/base-components/Form";
+import {FormSwitch, FormTextarea} from "@/base-components/Form";
 import VueSelect from "vue3-select-component";
+import Button from "@/base-components/Button";
+import LoadingIcon from "@/base-components/LoadingIcon";
 
 interface DetailsProps {
   payload: {
     content: string
+    policy: string
     variables: Array<IVariable>
-    environmentVariables:Array<IEnvironment>
+    environmentVariables: Array<IEnvironment>
   }
 }
-
 const pathsWithError = inject<Ref<Array<string>>>("pathsWithError")
 const props = withDefaults(defineProps<DetailsProps>(), {
   payload: () => ({
     content: "",
-    variables: [{ name: "", lowerValue: 0, higherValue: 0 }],
-    environmentVariables:[{name:"",value:"",secret:false}]
+    policy: "",
+    variables: [{name: "", lowerValue: 0, higherValue: 0}],
+    environmentVariables: [{name: "", value: "", secret: false}]
   })
 })
 
 const applicationStore = useApplicationStore()
 
 const rules = computed(() => ({
-  yamlValue: { required }
+  yamlValue: {required}
 }))
 
 const variablesCollectionRules = {
-  name: { required },
-  lowerValue: { required },
-  higherValue: { required }
+  name: {required},
+  lowerValue: {required},
+  higherValue: {required}
 }
 
 const environmentVariablesCollectionRules = {
-  name: { required },
-  value: { required }
+  name: {required},
+  value: {required}
 }
 
 const state = reactive({
   yamlValue: props.payload.content,
   variables: props.payload.variables,
-  environmentVariables: props.payload.environmentVariables
+  environmentVariables: props.payload.environmentVariables,
+  policy: props.payload.policy,
 })
 
 const autocompleteOptions = ref<Array<{ label: string; value: string }>>([])
 
-const v$ = useVuelidate(rules, state, { $stopPropagation: true })
+const v$ = useVuelidate(rules, state, {$stopPropagation: true})
+
+
+
+const generateAi = ref(false)
+const loadingAi = ref(false)
+const aiError = ref(false)
+const aiPrompt = ref('')
+const toggleAi = () => {
+  generateAi.value = !generateAi.value
+}
+const generateKubevela = async () => {
+  loadingAi.value = true
+  if (aiPrompt.value.length > 0) {
+    const response  = await applicationStore.invoiceGenerateKubevela(aiPrompt.value)
+    aiError.value = !response.success
+    state.yamlValue = response.answer
+  } else {
+    aiError.value = true
+    state.yamlValue = ''
+  }
+  console.log("Generate Kubevela ",aiPrompt.value,aiPrompt.value.length, state.yamlValue)
+  loadingAi.value = false
+}
+
 
 const hasBackendError = (path: string) => {
+  console.log("Error in path", path)
   if (!pathsWithError?.value) return false
   return pathsWithError.value.includes(path)
 }
 
 const addVariable = () => {
-  state.variables.push({ name: "", lowerValue: 0, higherValue: 0 })
+  state.variables.push({name: "", lowerValue: 0, higherValue: 0})
 }
 
 const removeVariable = (index: number) => {
@@ -233,8 +309,8 @@ const removeVariable = (index: number) => {
 }
 
 const addEnvironment = () => {
-  console.log("Adding environment",state)
-  state.environmentVariables.push({ name: "", value: "", secret: false })
+  console.log("Adding environment", state)
+  state.environmentVariables.push({name: "", value: "", secret: false})
 }
 
 const removeEnvironment = (index: number) => {
@@ -246,13 +322,13 @@ const queryParsedOptionsList = async () => {
 }
 
 const debouncedYamlKeySubstringSearch = debounce(queryParsedOptionsList, 1000)
-
 queryParsedOptionsList()
 
 defineExpose({
   variables: computed(() => state.variables),
   environmentVariables: computed(() => state.environmentVariables),
   content: computed(() => state.yamlValue),
+  policy: computed(() => state.policy),
   componentV$: computed(() => v$)
 })
 
@@ -267,7 +343,7 @@ defineExpose({
 
   --vs-padding: 0.25rem 0.5rem;
   --vs-border: theme("colors.darkmode.800");
-  --vs-border-radius:  theme("borderRadius.DEFAULT");
+  --vs-border-radius: theme("borderRadius.DEFAULT");
   --vs-font-size: inherit;
   --vs-font-weight: theme("fontWeight.medium");
   --vs-font-family: inherit;

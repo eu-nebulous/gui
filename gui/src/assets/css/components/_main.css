@@ -5,3 +5,6 @@
 .input--invalid {
   @apply !border-red-700 border;
 }
+.div--invalid {
+  @apply bg-red-700 bg-opacity-25;
+}
