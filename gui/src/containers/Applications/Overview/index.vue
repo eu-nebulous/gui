@@ -31,7 +31,6 @@
              :class="application.status == 'draft' ? 'bg-gray-700' :
                           application.status == 'deploying' ? 'bg-primary' :
                             application.status == 'ready' ? 'bg-success' :
-                              application.status == 'running' ? 'bg-amber-300 text-black' :
                                 application.status == 'running' ? 'bg-amber-300 text-black' :
                                   application.status =='failed' ? 'bg-danger' :
                                     application.status =='undeploying' ? 'bg-red-400' : ''"
@@ -52,7 +51,7 @@
           <Lucide
               v-if="application.status=='draft' || application.status=='failed' || application.status=='ready' || !application.status"
               icon="Pencil" class="w-10 text-warning" @click="toApplicationEditing(application)"/>
-          <Lucide v-if="application.status == 'deployed'  || !application.status" icon="Unlock" class="w-10 text-alert"
+          <Lucide v-if="application.status == 'running' || !application.status" icon="Unlock" class="w-10 text-alert"
                   @click="undeployApplication(application)"/>
           <Lucide icon="Copy" class="w-10 text-info" @click="duplicateApplication(application)"/>
           <Lucide
@@ -75,6 +74,7 @@ import Button from "@/base-components/Button"
 import Lucide from "@/base-components/Lucide/Lucide.vue"
 import {MODAL_WINDOW_NAMES, SNACKBAR_MESSAGE_TYPES} from "@/constants"
 import Input from "@/base-components/Form/FormInput.vue";
+import {UndeployResponseType} from "@/types/responses.ts";
 
 const router = useRouter()
 const applicationStore = useApplicationStore()
@@ -170,13 +170,10 @@ const duplicateApplication = (application: IApplication) => {
 
 const undeployApplication = (application: IApplication) => {
   applicationStore.undeployApplication(application.uuid).then(() => {
-
-    application.status = "undeploying";
     uiStore.setSnackbarMessage({
       message: `You need to manually undeploy resources.`,
       type: SNACKBAR_MESSAGE_TYPES.INFO
     });
-
   }).catch(() => {
     uiStore.setSnackbarMessage({
       message: `Failed to undeploy application ${application.title}`,

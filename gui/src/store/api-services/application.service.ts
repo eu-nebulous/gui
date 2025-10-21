@@ -1,6 +1,6 @@
 import axios from "axios"
 import {IApplication, IApplicationOverview} from "@/interfaces/application.interface.ts"
-import {DeleteResponseType, DeployResponseType, PolicyResponseType} from "@/types/responses.ts"
+import {DeleteResponseType, DeployResponseType, PolicyResponseType, UndeployResponseType} from "@/types/responses.ts"
 import {IVariable} from "@/interfaces/variables.interface.ts"
 import {IResource} from "@/interfaces/resources.interface.ts"
 import {ITemplate} from "@/interfaces/template.interface.ts"
@@ -189,7 +189,7 @@ export default {
     async duplicateApplication(uuid: string): Promise<IApplicationOverview> {
         return axios.post(`/api/v1/application/${uuid}/uuid/duplicate`).then(({data}) => data)
     },
-    async undeployApplication(uuid: string): Promise<DeployResponseType> {
+    async undeployApplication(uuid: string): Promise<UndeployResponseType> {
         return axios.post(`/api/v1/application/${uuid}/uuid/undeploy`).then(({data}) => data)
     },
     async checkApplicationStatus(uuids: string[]): Promise<Array<{ uuid: string; status: string }>> {
