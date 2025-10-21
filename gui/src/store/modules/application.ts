@@ -4,6 +4,7 @@ import {IApplication, IApplicationOverview} from "@/interfaces/application.inter
 import {useUIStore} from "@/store/modules/ui.ts"; // Import the UI store
 import {SNACKBAR_MESSAGE_TYPES} from "@/constants";
 import {ISLOCompositeExpression} from "@/interfaces/sloviolation.interface.ts";
+import {UndeployResponseType} from "@/types/responses.ts";
 
 interface ApplicationState {
     applications: IPagination<IApplicationOverview>
@@ -80,11 +81,12 @@ export const useApplicationStore = defineStore("application", {
             this.applications.results.unshift(duplicatedApplication)
             return duplicatedApplication
         },
-        async undeployApplication(uuid: string): Promise<string> {
-            return applicationService.undeployApplication(uuid).then((status) => {
+        async undeployApplication(uuid: string): Promise<void> {
+            return applicationService.undeployApplication(uuid).then((data) => {
+                debugger
                 const app: any = this.applications.results.find((app) => app.uuid === uuid);
-                app.status = status.status;
-                return status.status;
+                app.status = data.status;
+                app.uuid = data.updateResource.uuid;
             });
         },
 
