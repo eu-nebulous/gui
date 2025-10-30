@@ -198,4 +198,8 @@ export default {
     async getMonitoringData(uuid: string): Promise<Array<any>> {
         return axios.get(`/api/v1/application/${uuid}/monitor/data`).then(({data}) => data)
     },
+    async getVRToken(uuid: string): Promise<String> {
+        return axios.post(`/api/v1/application/${uuid}/vr/token`).then(({data}) => data)
+    },
+
 }
