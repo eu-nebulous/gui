@@ -1,5 +1,8 @@
 <template>
   <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 p-4">
+    <div v-if="!metrics || metrics.length <= 0" class="col-span-full flex items-center justify-center min-h-96">
+      <p class="text-3xl font-semibold text-gray-100">No Metrics Recorded</p>
+    </div>
     <template v-for="metric in metrics" :key="metric.title">
       <!-- Chart Type Metrics (line, bar) -->
       <Card
@@ -51,7 +54,7 @@ const getCardSize = (type: string) => {
 const getChartWidth = (type: string): number => {
   // For wider card spans, use larger width
   if (type === 'line' || type === 'bar') {
-    return 400
+    return 500
   }
   return 180
 }

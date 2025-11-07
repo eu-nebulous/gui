@@ -1,6 +1,6 @@
 <template>
   <div
-    :style="{
+      :style="{
       width: `${width}px`,
       height: `${height}px`
     }"
@@ -16,8 +16,8 @@ export default {
 </script>
 
 <script setup lang="ts">
-import ChartJs, { ChartConfiguration, ChartOptions } from "chart.js/auto"
-import { CanvasHTMLAttributes, ref, onMounted, inject, watch, computed } from "vue"
+import ChartJs, {ChartConfiguration, ChartOptions} from "chart.js/auto"
+import {CanvasHTMLAttributes, ref, onMounted, inject, watch, computed} from "vue"
 
 export interface ChartElement extends HTMLCanvasElement {
   instance: ChartJs
@@ -61,12 +61,28 @@ const bindInstance = (el: ChartElement) => {
 }
 
 const defaultOptions = computed<ChartOptions>(() => {
+  const truncate = (s, n = 50) => (s && s.length > n ? s.slice(0, n) + "…" : s || "");
   return {
     maintainAspectRatio: false,
-    animation:false,
+    animation: false,
     plugins: {
+      colors: {
+        forceOverride: true
+      },
       legend: {
         display: false
+      },
+      tooltip:{
+        callbacks: {
+             title: (items) => truncate(items?.[0]?.dataset?.label || "", 50),
+             label: (ctx) => {
+                const xLabel = ctx.label || "";
+                 const value = ctx.formattedValue || "";
+                 return `${xLabel}: ${value}`;
+             }
+        },
+        titleFont: { weight: "bold" },
+        bodyFont: { weight: "bold" },
       }
     },
     scales: {
@@ -91,8 +107,14 @@ const defaultOptions = computed<ChartOptions>(() => {
         }
       }
     },
+
+
     ...props.options
+
+
   }
+
+
 })
 
 onMounted(() => {
