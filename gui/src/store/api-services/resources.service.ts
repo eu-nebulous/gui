@@ -13,7 +13,6 @@ export default {
   },
 
   async createResource(payload: IResourcePayload): Promise<IResource> {
-
     return axios.post("/api/v1/resources", payload).then(({ data }) => data)
   },
   async editResource(uuid: string, payload: IResourcePayload): Promise<IResource> {

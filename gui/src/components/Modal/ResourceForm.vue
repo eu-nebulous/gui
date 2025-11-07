@@ -353,7 +353,8 @@ const availableInPlatform = (platforms: Array<string>): boolean => {
 }
 
 const formatFieldsForSubmission = () => {
-  if (resourceData.value.platform && resourceData.value.platform.title === 'AWS') {
+  const selected = resourceStore.platforms.find((p) => { return p.uuid === resourceData.value.platform.uuid})
+  if (selected && selected.title === 'AWS') {
     // Format regions as a comma-separated string
     if (Array.isArray(resourceData.value.regions)) {
       resourceData.value.regions = resourceData.value.regions.map((region: IRegion) => region.region).join(',')
