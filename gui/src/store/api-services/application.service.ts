@@ -15,10 +15,6 @@ export default {
     async validateApplication(payload: Partial<IApplication>): Promise<boolean> {
         return axios.post("/api/v1/application/validate", payload).then(({data}) => data)
     },
-    async validateMetaConstraints(slMetaConstraints: ISLOCompositeExpression): Promise<boolean> {
-        return axios.post("/api/v1/application/validate-constraints", slMetaConstraints).then(({data}) => data)
-    },
-
     async getMathParsedVariables(payload: { equation: string }): Promise<{ variables: Array<string> }> {
         return axios.post("/api/v1/mathparser/expression", payload).then(({data}) => data)
     },
