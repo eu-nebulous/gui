@@ -15,10 +15,6 @@ export default {
     async validateApplication(payload: Partial<IApplication>): Promise<boolean> {
         return axios.post("/api/v1/application/validate", payload).then(({data}) => data)
     },
-    async validateMetaConstraints(slMetaConstraints: ISLOCompositeExpression): Promise<boolean> {
-        return axios.post("/api/v1/application/validate-constraints", slMetaConstraints).then(({data}) => data)
-    },
-
     async getMathParsedVariables(payload: { equation: string }): Promise<{ variables: Array<string> }> {
         return axios.post("/api/v1/mathparser/expression", payload).then(({data}) => data)
     },
@@ -198,4 +194,8 @@ export default {
     async getMonitoringData(uuid: string): Promise<Array<any>> {
         return axios.get(`/api/v1/application/${uuid}/monitor/data`).then(({data}) => data)
     },
+    async getVRToken(uuid: string): Promise<String> {
+        return axios.post(`/api/v1/application/${uuid}/vr/token`).then(({data}) => data)
+    },
+
 }

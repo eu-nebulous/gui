@@ -96,21 +96,7 @@ const metricsNames = computed(() => metrics.value.map((metric) => metric.name))
 const sloViolations = reactive<ISLOCompositeExpression>(_.cloneDeep(props.payload.sloViolations))
 const slCreations = reactive<ISLOCompositeExpression>(_.cloneDeep(props.payload.slCreations))
 const slMetaConstraints = reactive<ISLOCompositeExpression>(_.cloneDeep(props.payload.slMetaConstraints))
-const slMetaConstraintsValid = ref(false)
-const validatingMetaConstraints = ref<Boolean>(false)
-const validateMetaConstraints = async () => {
-  validatingMetaConstraints.value = true
-  applicationService.validateMetaConstraints(slMetaConstraints)
-      .then((bool) => slMetaConstraintsValid.value = bool)
-      .catch((error) => {
-        console.error(error)
-        slMetaConstraintsValid.value = false
-      })
-      .finally(() => {
-        validatingMetaConstraints.value = false
-      })
-}
-
+const slMetaConstraintsValid = ref(true)
 const nodeManager = (nodes: ISLOCompositeExpression | ISLOViolationRule) => {
   const preOrderTraversal = function* (
       node: ISLOCompositeExpression | ISLOViolationRule = nodes,
@@ -246,19 +232,6 @@ defineExpose({
     <div class="flex flex-col space-y-5"
     >
       <p class="text-2xl">Meta-Constraint Creator</p>
-      <div>
-        <Button
-            class="mr-8"
-            variant="secondary"
-            @click="validateMetaConstraints"
-            :disabled="slMetaConstraints.children.length <=0"
-        >
-          <span v-if="!validatingMetaConstraints">Validate</span>
-          <LoadingIcon
-              icon="circles"
-              v-if="validatingMetaConstraints"/>
-        </Button>
-      </div>
       <div :class="{
          'flex flex-col rounded-lg space-y-5': slMetaConstraintsValid,
          'flex flex-col rounded-lg space-y-5 div--invalid': !slMetaConstraintsValid,

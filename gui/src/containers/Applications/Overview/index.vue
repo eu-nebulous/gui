@@ -46,8 +46,11 @@
           <Lucide
               v-if="application.status=='draft' || application.status=='failed'  || application.status=='ready' || !application.status"
               icon="PlayCircle" class="w-10 text-white" @click="deployApplication(application)"/>
-          <Lucide v-if="application.status=='running'" icon="ChartArea" class="w-10 text-white"
-                  @click="showApplicationGraph(application)"/>
+          <Tippy content="Copy VR Token">
+            <Lucide v-if="application.status=='running' && !loadingToken" icon="Rotate3d" class="w-10 text-white"
+                    @click="showApplicationGraph(application)"/>
+            <LoadingIcon icon="circles" v-if="application.status=='running' && loadingToken"/>
+          </Tippy>
           <Lucide
               v-if="application.status=='draft' || application.status=='failed' || application.status=='ready' || !application.status"
               icon="Pencil" class="w-10 text-warning" @click="toApplicationEditing(application)"/>
@@ -74,14 +77,17 @@ import Button from "@/base-components/Button"
 import Lucide from "@/base-components/Lucide/Lucide.vue"
 import {MODAL_WINDOW_NAMES, SNACKBAR_MESSAGE_TYPES} from "@/constants"
 import Input from "@/base-components/Form/FormInput.vue";
-import {UndeployResponseType} from "@/types/responses.ts";
+import Tippy from "@/base-components/Tippy";
+import LoadingIcon from "@/base-components/LoadingIcon";
+import useClipboard from 'vue-clipboard3';
 
 const router = useRouter()
 const applicationStore = useApplicationStore()
 const uiStore = useUIStore()
+const {toClipboard} = useClipboard()
 
 const applicationQuery = ref<String>('')
-
+const loadingToken = ref<boolean>(false)
 const applications = computed<Array<IApplicationOverview>>(() => {
 
   const q = applicationQuery.value.trim()
@@ -95,8 +101,6 @@ const applications = computed<Array<IApplicationOverview>>(() => {
 
 })
 
-
-const applicatonGraph = ref<Array<String>>([])
 
 const redirectToAppCreation = () => {
   router.push({name: "application-creation"})
@@ -129,20 +133,17 @@ const deployApplication = (application: IApplication) => {
 }
 const showApplicationGraph = (application: IApplication) => {
   console.log(application)
-  if (applicatonGraph.value.includes(application.uuid)) {
-    applicatonGraph.value = applicatonGraph.value.filter((e) => e != application.uuid)
-  } else {
-    applicatonGraph.value.push(application.uuid)
+  if (loadingToken.value) {
+    console.log("Already fetching token")
   }
+  loadingToken.value = true
+  applicationStore.getVRToken(application.uuid).then(async (token:string) => {
+    await toClipboard(token)
+
+    loadingToken.value = false
+  })
 
 }
-
-const isApplicationGraphShowing = (application: IApplication) => {
-  console.log(applicatonGraph.value.includes(application.uuid))
-  return applicatonGraph.value.includes(application.uuid)
-
-}
-
 
 const duplicateApplication = (application: IApplication) => {
   uiStore.setModalWindowState({
