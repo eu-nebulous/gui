@@ -1,7 +1,7 @@
 import { IMetricComposite, IMetricRaw } from "@/interfaces/metrics.interface.ts"
 import { IVariable } from "@/interfaces/variables.interface.ts"
 import { IAppResource } from "@/interfaces/resources.interface.ts"
-import { ISLOCompositeExpression } from "@/interfaces/sloviolation.interface.ts"
+import {ISLExpression, ISLOCompositeExpression} from "@/interfaces/sloviolation.interface.ts"
 import { IUtilityFunction } from "@/interfaces/utilityFunctions.interface.ts"
 import { ITemplate } from "@/interfaces/template.interface.ts"
 import { IParameter } from "@/interfaces/parameter.interface.ts"
@@ -20,7 +20,7 @@ export interface IApplication {
   environmentVariables: Array<IEnvironment>
   resources: Array<IAppResource>
   sloViolations: string | ISLOCompositeExpression
-  slCreations: string | ISLOCompositeExpression
+  slCreations: string | Array<ISLExpression>
   slMetaConstraints: string | ISLOCompositeExpression
   utilityFunctions: Array<IUtilityFunction>
 }

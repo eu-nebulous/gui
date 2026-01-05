@@ -48,7 +48,7 @@ import {v4 as uuid} from "uuid"
 import {IMetricComposite, IMetricRaw} from "@/interfaces/metrics.interface.ts"
 import {IVariable} from "@/interfaces/variables.interface.ts"
 import {IAppResource} from "@/interfaces/resources.interface.ts"
-import {ISLOCompositeExpression} from "@/interfaces/sloviolation.interface.ts"
+import {ISLExpression, ISLOCompositeExpression} from "@/interfaces/sloviolation.interface.ts"
 import {IUtilityFunction} from "@/interfaces/utilityFunctions.interface.ts"
 import {IApplication} from "@/interfaces/application.interface.ts"
 import MultiStepsProvider from "@/base-components/MultiStepsProvider/index.vue"
@@ -110,7 +110,7 @@ const props = withDefaults(defineProps<ApplicationProps>(), {
     ],
     policy:'',
     sloViolations: { nodeKey: uuid(), isComposite: true, condition: "AND", not: false, children: [] },
-    slCreations: { nodeKey: uuid(), isComposite: true, condition: "AND", not: false, children: [] },
+    slCreations: [{ nodeKey: uuid(), isComposite: true, condition: "AND", not: false, children: [], violationThreshold:0, evaluationPeriod:0}],
     slMetaConstraints: { nodeKey: uuid(), isComposite: true, condition: "AND", not: false, children: [] },
     utilityFunctions: [
       {
@@ -274,7 +274,7 @@ const updateStagesData = () => {
           parameters: Array<IParameter>
           metrics: Array<IMetricRaw | IMetricComposite>
           sloViolations: ISLOCompositeExpression
-          slCreations: ISLOCompositeExpression
+          slCreations: Array<ISLExpression>
           slMetaConstraints: ISLOCompositeExpression
         }
       ) => {
@@ -321,7 +321,7 @@ const updateStagesData = () => {
           parameters: Array<IParameter>
           metrics: Array<IMetricRaw | IMetricComposite>
           sloViolations: ISLOCompositeExpression
-          slCreations: ISLOCompositeExpression
+          slCreations: Array<ISLExpression>
           slMetaConstraints: ISLOCompositeExpression
         }
       ) => {
