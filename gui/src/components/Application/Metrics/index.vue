@@ -69,7 +69,9 @@ const props = withDefaults(defineProps<MetricsProps>(), {
       isComposite: true,
       condition: "AND",
       not: false,
-      children: []
+      children: [],
+      violationThreshold:0,
+      evaluationPeriod:0
     }],
     slMetaConstraints: {
       nodeKey: uuid(),
