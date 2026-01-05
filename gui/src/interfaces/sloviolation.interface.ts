@@ -7,6 +7,10 @@ export interface ISLOCompositeExpression {
   condition: "AND" | "OR"
   children: Array<ISLOViolationRule | ISLOCompositeExpression>
 }
+export interface ISLExpression extends ISLOCompositeExpression {
+  violationThreshold: number,
+  evaluationPeriod: number,
+}
 
 export interface ISLOViolationRule {
   nodeKey: string

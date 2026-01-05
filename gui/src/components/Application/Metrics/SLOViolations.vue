@@ -136,6 +136,7 @@ const hasBackendError = (path: string) => {
             <Button
                 size="sm"
                 variant="danger"
+                v-if="!props.isRootNode"
                 :disabled="props.isRootNode"
                 @click="emit('removeSLOViolation', props.rules.nodeKey)"
             >

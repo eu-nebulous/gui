@@ -116,13 +116,13 @@ export default {
 
                 slCreations:
                     !application.slCreations ?
-                     {
+                     [{
                       nodeKey: v4uuid(),
                       isComposite: true,
                       condition: "AND",
                       not: false,
                       children: []
-                    } :
+                    }]:
                     typeof application.slCreations === "string"
                         ? JSON.parse(application.slCreations)
                         : application.slCreations,

@@ -1,4 +1,3 @@
-
 <script setup lang="ts">
 import {computed, reactive, ref} from "vue"
 import _ from "lodash"
@@ -9,7 +8,7 @@ import SLOViolations from "./SLOViolations.vue"
 import {IMetricComposite, IMetricRaw} from "@/interfaces/metrics.interface.js"
 import {ITemplate} from "@/interfaces/template.interface.ts"
 import {IParameter} from "@/interfaces/parameter.interface.ts"
-import {ISLOCompositeExpression, ISLOViolationRule} from "@/interfaces/sloviolation.interface.ts"
+import {ISLExpression, ISLOCompositeExpression, ISLOViolationRule} from "@/interfaces/sloviolation.interface.ts"
 import {v4 as uuid} from "uuid"
 import {IRulePayload} from "@/components/Application/Metrics/SLOViolations.vue"
 import {OperatorType} from "@/types/metrics.ts"
@@ -17,6 +16,8 @@ import {useVuelidate} from "@vuelidate/core"
 import Button from "@/base-components/Button";
 import applicationService from "@/store/api-services/application.service.ts";
 import LoadingIcon from "@/base-components/LoadingIcon";
+import Lucide from "@/base-components/Lucide";
+import {FormInput, FormLabel} from "@/base-components/Form";
 
 interface MetricsProps {
   payload: {
@@ -25,7 +26,7 @@ interface MetricsProps {
     parameters: Array<IParameter>
     metrics: Array<IMetricComposite | IMetricRaw>
     sloViolations: ISLOCompositeExpression
-    slCreations: ISLOCompositeExpression
+    slCreations: Array<ISLExpression>
     slMetaConstraints: ISLOCompositeExpression
   }
 }
@@ -63,13 +64,13 @@ const props = withDefaults(defineProps<MetricsProps>(), {
       not: false,
       children: []
     },
-    slCreations: {
+    slCreations: [{
       nodeKey: uuid(),
       isComposite: true,
       condition: "AND",
       not: false,
       children: []
-    },
+    }],
     slMetaConstraints: {
       nodeKey: uuid(),
       isComposite: true,
@@ -94,9 +95,32 @@ const metricsNames = computed(() => metrics.value.map((metric) => metric.name))
 
 /* SLO */
 const sloViolations = reactive<ISLOCompositeExpression>(_.cloneDeep(props.payload.sloViolations))
-const slCreations = reactive<ISLOCompositeExpression>(_.cloneDeep(props.payload.slCreations))
+const slCreations = reactive<Array<ISLExpression>>(_.cloneDeep(props.payload.slCreations))
 const slMetaConstraints = reactive<ISLOCompositeExpression>(_.cloneDeep(props.payload.slMetaConstraints))
 const slMetaConstraintsValid = ref(true)
+
+const addSlCreations = () => {
+  slCreations.push(
+      {
+        nodeKey: uuid(),
+        isComposite: true,
+        condition: "AND",
+        not: false,
+        children: [],
+        violationThreshold: 0,
+        evaluationPeriod: 0
+      }
+  )
+}
+
+const removeSlCreations = (key) => {
+  const index = slCreations.findIndex((slCreation) => slCreation.nodeKey === key)
+  if (index !== -1) {
+    slCreations.splice(index, 1)
+  }
+}
+
+
 const nodeManager = (nodes: ISLOCompositeExpression | ISLOViolationRule) => {
   const preOrderTraversal = function* (
       node: ISLOCompositeExpression | ISLOViolationRule = nodes,
@@ -217,17 +241,46 @@ defineExpose({
     </div>
 
     <div class="flex flex-col space-y-5">
-      <p class="text-2xl">SL Creation</p>
-      <SLOViolations
-          :isRootNode="true"
-          :rules="slCreations"
-          :metricsNames="metricsNames"
-          @addSLOViolation="nodeManager(slCreations).add"
-          @removeSLOViolation="nodeManager(slCreations).remove"
-          @conditionChange="nodeManager(slCreations).onChange"
-          @notExpressionChange="nodeManager(slCreations).onExpressionChange"
-          @ruleChange="nodeManager(slCreations).onRuleChange"
-      />
+      <p class="text-2xl">SL Creation
+        <Button size="sm" variant="primary" @click="addSlCreations()">
+          <Lucide icon="Plus" class="w-4 h-4 mr-2"/>
+          <p class="hidden md:inline-block">Add</p>
+          <p class="inline-block md:hidden">Add</p>
+        </Button>
+      </p>
+
+      <div v-for="slCreation in slCreations" class="mb-5 pb-5 border-b-2">
+        <SLOViolations
+            :isRootNode="true"
+            :rules="slCreation"
+            :metricsNames="metricsNames"
+            @addSLOViolation="nodeManager(slCreation).add"
+            @removeSLOViolation="nodeManager(slCreation).remove"
+            @conditionChange="nodeManager(slCreation).onChange"
+            @notExpressionChange="nodeManager(slCreation).onExpressionChange"
+            @ruleChange="nodeManager(slCreation).onRuleChange"
+        />
+        <div class="flex gap-3 mb-5" v-if="slCreation.children.length > 0">
+          <div>
+            <FormLabel>Violation Threshold</FormLabel>
+            <FormInput
+                v-model="slCreation.violationThreshold"
+                placeholder="1"/>
+          </div>
+          <div>
+            <FormLabel>Evaluation Threshold (seconds)</FormLabel>
+            <FormInput
+                v-model="slCreation.evaluationPeriod"
+                placeholder="3600"/>
+          </div>
+        </div>
+        <Button size="sm" variant="danger" @click="removeSlCreations(slCreation.nodeKey)">
+          <Lucide icon="Minus" class="w-4 h-4 mr-2"/>
+          <p class="hidden md:inline-block">Remove SL</p>
+          <p class="inline-block md:hidden">Remove SL</p>
+        </Button>
+      </div>
+
     </div>
     <div class="flex flex-col space-y-5"
     >
