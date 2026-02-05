@@ -11,19 +11,20 @@ export default {
 <script setup lang="ts">
 import _ from "lodash"
 import { twMerge } from "tailwind-merge"
-import { computed, InputHTMLAttributes, useAttrs, inject } from "vue"
+import { computed, useAttrs, inject } from "vue"
 import { ProvideFormInline } from "./FormInline.vue"
 import { ProvideInputGroup } from "./InputGroup/InputGroup.vue"
 
-interface FormInputProps extends /* @vue-ignore */ InputHTMLAttributes {
-  value?: InputHTMLAttributes["value"]
-  modelValue?: InputHTMLAttributes["value"]
+interface FormInputProps {
+  value?: unknown
+  modelValue?: unknown
   formInputSize?: "sm" | "lg"
   rounded?: boolean
+  type?: string
 }
 
 interface FormInputEmit {
-  (e: "update:modelValue", value: string): void
+  (e: "update:modelValue", value: unknown): void
 }
 
 const props = defineProps<FormInputProps>()

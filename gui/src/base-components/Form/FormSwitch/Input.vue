@@ -7,17 +7,17 @@ export default {
 <script setup lang="ts">
 import _ from "lodash"
 import { twMerge } from "tailwind-merge"
-import { computed, InputHTMLAttributes, useAttrs } from "vue"
+import { computed, useAttrs } from "vue"
 import FormCheck from "../FormCheck"
 
-interface InputProps extends /* @vue-ignore */ InputHTMLAttributes {
-  value?: InputHTMLAttributes["value"]
-  modelValue?: InputHTMLAttributes["value"]
+interface InputProps {
+  value?: string | number | boolean | null
+  modelValue?: string | number | boolean | null
   type: "checkbox"
 }
 
 interface InputEmit {
-  (e: "update:modelValue", value: string): void
+  (e: "update:modelValue", value: string | number | boolean | null | undefined): void
 }
 
 const props = defineProps<InputProps>()

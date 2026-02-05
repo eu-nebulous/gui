@@ -109,7 +109,7 @@ const props = withDefaults(defineProps<ApplicationProps>(), {
       }
     ],
     policy:'',
-    sloViolations: { nodeKey: uuid(), isComposite: true, condition: "AND", not: false, children: [] },
+    sloViolations: [{ nodeKey: uuid(), isComposite: true, condition: "AND", not: false, children: [], violationThreshold:0, evaluationPeriod:0 }],
     slCreations: [{ nodeKey: uuid(), isComposite: true, condition: "AND", not: false, children: [], violationThreshold:0, evaluationPeriod:0}],
     slMetaConstraints: { nodeKey: uuid(), isComposite: true, condition: "AND", not: false, children: [] },
     utilityFunctions: [
@@ -273,7 +273,7 @@ const updateStagesData = () => {
           templates: Array<ITemplate>
           parameters: Array<IParameter>
           metrics: Array<IMetricRaw | IMetricComposite>
-          sloViolations: ISLOCompositeExpression
+          sloViolations: Array<ISLExpression>
           slCreations: Array<ISLExpression>
           slMetaConstraints: ISLOCompositeExpression
         }
@@ -320,7 +320,7 @@ const updateStagesData = () => {
           templates: Array<ITemplate>
           parameters: Array<IParameter>
           metrics: Array<IMetricRaw | IMetricComposite>
-          sloViolations: ISLOCompositeExpression
+          sloViolations: Array<ISLExpression>
           slCreations: Array<ISLExpression>
           slMetaConstraints: ISLOCompositeExpression
         }

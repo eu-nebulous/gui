@@ -86,7 +86,7 @@ const applicationStore = useApplicationStore()
 const uiStore = useUIStore()
 const {toClipboard} = useClipboard()
 
-const applicationQuery = ref<String>('')
+const applicationQuery = ref<string>('')
 const loadingToken = ref<boolean>(false)
 const applications = computed<Array<IApplicationOverview>>(() => {
 
