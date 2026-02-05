@@ -110,7 +110,7 @@ export default {
                         }
                 }),
                 sloViolations:
-                    !application.slCreations ?
+                    !application.sloViolations ?
                      [{
                       nodeKey: v4uuid(),
                       isComposite: true,
