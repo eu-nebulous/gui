@@ -3,7 +3,7 @@ type LitepickerConfig = Partial<ILPConfiguration>
 </script>
 
 <script setup lang="ts">
-import { InputHTMLAttributes, onMounted, ref, inject } from "vue"
+import { onMounted, ref, inject } from "vue"
 import { setValue, init, reInit } from "./litepicker"
 import LitepickerJs from "litepicker"
 import { FormInput } from "../../base-components/Form"
@@ -17,7 +17,7 @@ export interface LitepickerEmit {
   (e: "update:modelValue", value: string): void
 }
 
-export interface LitepickerProps extends /* @vue-ignore */ InputHTMLAttributes {
+export interface LitepickerProps {
   options: {
     format?: string | undefined
   } & LitepickerConfig

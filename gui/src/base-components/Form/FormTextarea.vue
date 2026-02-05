@@ -7,19 +7,20 @@ export default {
 <script setup lang="ts">
 import _ from "lodash"
 import { twMerge } from "tailwind-merge"
-import { computed, InputHTMLAttributes, useAttrs, inject } from "vue"
+import { computed, useAttrs, inject } from "vue"
 import { ProvideFormInline } from "./FormInline.vue"
 import { ProvideInputGroup } from "./InputGroup/InputGroup.vue"
 
-interface FormTextareaProps extends /* @vue-ignore */ InputHTMLAttributes {
-  value?: InputHTMLAttributes["value"]
-  modelValue?: InputHTMLAttributes["value"]
+interface FormTextareaProps {
+  value?: string | number | null
+  modelValue?: string | number | null
   formTextareaSize?: "sm" | "lg"
   rounded?: boolean
+  type?: string
 }
 
 interface FormTextareaEmit {
-  (e: "update:modelValue", value: string): void
+  (e: "update:modelValue", value: string | number | null | undefined): void
 }
 
 const props = defineProps<FormTextareaProps>()
