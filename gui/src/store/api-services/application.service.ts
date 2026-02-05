@@ -110,10 +110,17 @@ export default {
                         }
                 }),
                 sloViolations:
+                    !application.slCreations ?
+                     [{
+                      nodeKey: v4uuid(),
+                      isComposite: true,
+                      condition: "AND",
+                      not: false,
+                      children: []
+                    }]:
                     typeof application.sloViolations === "string"
                         ? JSON.parse(application.sloViolations)
                         : application.sloViolations,
-
                 slCreations:
                     !application.slCreations ?
                      [{

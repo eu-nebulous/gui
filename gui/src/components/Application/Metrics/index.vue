@@ -14,8 +14,6 @@ import {IRulePayload} from "@/components/Application/Metrics/SLOViolations.vue"
 import {OperatorType} from "@/types/metrics.ts"
 import {useVuelidate} from "@vuelidate/core"
 import Button from "@/base-components/Button";
-import applicationService from "@/store/api-services/application.service.ts";
-import LoadingIcon from "@/base-components/LoadingIcon";
 import Lucide from "@/base-components/Lucide";
 import {FormInput, FormLabel} from "@/base-components/Form";
 
@@ -25,7 +23,7 @@ interface MetricsProps {
     templates: Array<ITemplate>
     parameters: Array<IParameter>
     metrics: Array<IMetricComposite | IMetricRaw>
-    sloViolations: ISLOCompositeExpression
+    sloViolations: Array<ISLExpression>
     slCreations: Array<ISLExpression>
     slMetaConstraints: ISLOCompositeExpression
   }
@@ -57,21 +55,23 @@ const props = withDefaults(defineProps<MetricsProps>(), {
         }
       }
     ],
-    sloViolations: {
+    sloViolations: [{
       nodeKey: uuid(),
       isComposite: true,
       condition: "AND",
       not: false,
-      children: []
-    },
+      children: [],
+      violationThreshold: 0,
+      evaluationPeriod: 0
+    }],
     slCreations: [{
       nodeKey: uuid(),
       isComposite: true,
       condition: "AND",
       not: false,
       children: [],
-      violationThreshold:0,
-      evaluationPeriod:0
+      violationThreshold: 0,
+      evaluationPeriod: 0
     }],
     slMetaConstraints: {
       nodeKey: uuid(),
@@ -96,7 +96,7 @@ const metrics = ref<Array<IMetricRaw | IMetricComposite>>(_.cloneDeep(props.payl
 const metricsNames = computed(() => metrics.value.map((metric) => metric.name))
 
 /* SLO */
-const sloViolations = reactive<ISLOCompositeExpression>(_.cloneDeep(props.payload.sloViolations))
+const sloViolations = reactive<Array<ISLExpression>>(_.cloneDeep(props.payload.sloViolations))
 const slCreations = reactive<Array<ISLExpression>>(_.cloneDeep(props.payload.slCreations))
 const slMetaConstraints = reactive<ISLOCompositeExpression>(_.cloneDeep(props.payload.slMetaConstraints))
 const slMetaConstraintsValid = ref(true)
@@ -119,6 +119,27 @@ const removeSlCreations = (key) => {
   const index = slCreations.findIndex((slCreation) => slCreation.nodeKey === key)
   if (index !== -1) {
     slCreations.splice(index, 1)
+  }
+}
+
+const addSloViolations = () => {
+  sloViolations.push(
+      {
+        nodeKey: uuid(),
+        isComposite: true,
+        condition: "AND",
+        not: false,
+        children: [],
+        violationThreshold: 0,
+        evaluationPeriod: 0
+      }
+  )
+}
+
+const removeSloViolations = (key) => {
+  const index = sloViolations.findIndex((sloViolations) => sloViolations.nodeKey === key)
+  if (index !== -1) {
+    sloViolations.splice(index, 1)
   }
 }
 
@@ -230,16 +251,46 @@ defineExpose({
 
     <div class="flex flex-col space-y-5">
       <p class="text-2xl">SLO</p>
-      <SLOViolations
-          :isRootNode="true"
-          :rules="sloViolations"
-          :metricsNames="metricsNames"
-          @addSLOViolation="nodeManager(sloViolations).add"
-          @removeSLOViolation="nodeManager(sloViolations).remove"
-          @conditionChange="nodeManager(sloViolations).onChange"
-          @notExpressionChange="nodeManager(sloViolations).onExpressionChange"
-          @ruleChange="nodeManager(sloViolations).onRuleChange"
-      />
+
+      <p class="text-2xl">SLO Violations
+        <Button size="sm" variant="primary" @click="addSloViolations()">
+          <Lucide icon="Plus" class="w-4 h-4 mr-2"/>
+          <p class="hidden md:inline-block">Add</p>
+          <p class="inline-block md:hidden">Add</p>
+        </Button>
+      </p>
+
+      <div v-for="sloViolation in sloViolations" class="mb-5 pb-5 border-b-2">
+        <SLOViolations
+            :isRootNode="true"
+            :rules="sloViolation"
+            :metricsNames="metricsNames"
+            @addSLOViolation="nodeManager(sloViolation).add"
+            @removeSLOViolation="nodeManager(sloViolation).remove"
+            @conditionChange="nodeManager(sloViolation).onChange"
+            @notExpressionChange="nodeManager(sloViolation).onExpressionChange"
+            @ruleChange="nodeManager(sloViolation).onRuleChange"
+        />
+        <div class="flex gap-3 mb-5" v-if="sloViolation.children.length > 0">
+          <div>
+            <FormLabel>Violation Threshold</FormLabel>
+            <FormInput
+                v-model="sloViolation.violationThreshold"
+                placeholder="1"/>
+          </div>
+          <div>
+            <FormLabel>Evaluation Threshold (seconds)</FormLabel>
+            <FormInput
+                v-model="sloViolation.evaluationPeriod"
+                placeholder="3600"/>
+          </div>
+        </div>
+        <Button size="sm" variant="danger" @click="removeSloViolations(sloViolation.nodeKey)">
+          <Lucide icon="Minus" class="w-4 h-4 mr-2"/>
+          <p class="hidden md:inline-block">Remove SLO</p>
+          <p class="inline-block md:hidden">Remove SLO</p>
+        </Button>
+      </div>
     </div>
 
     <div class="flex flex-col space-y-5">
