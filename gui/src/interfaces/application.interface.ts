@@ -19,7 +19,7 @@ export interface IApplication {
   variables: Array<IVariable>
   environmentVariables: Array<IEnvironment>
   resources: Array<IAppResource>
-  sloViolations: string | Array<ISLExpression>
+  sloViolations: string | ISLExpression
   slCreations: string | Array<ISLExpression>
   slMetaConstraints: string | ISLOCompositeExpression
   utilityFunctions: Array<IUtilityFunction>

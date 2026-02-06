@@ -18,8 +18,8 @@ export default {
     async getMathParsedVariables(payload: { equation: string }): Promise<{ variables: Array<string> }> {
         return axios.post("/api/v1/mathparser/expression", payload).then(({data}) => data)
     },
-    async generateKubevela(payload): Promise<{success:boolean, answer:string}> {
-        return axios.post("/api/v1/application/generate", {prompt:payload}).then(({data}) => data)
+    async generateKubevela(payload): Promise<{ success: boolean, answer: string }> {
+        return axios.post("/api/v1/application/generate", {prompt: payload}).then(({data}) => data)
     },
 
     async getYamlParsedKeys(payload: { content: string }, key: string): Promise<Array<{
@@ -111,40 +111,43 @@ export default {
                 }),
                 sloViolations:
                     !application.sloViolations ?
-                     [{
-                      nodeKey: v4uuid(),
-                      isComposite: true,
-                      condition: "AND",
-                      not: false,
-                      children: []
-                    }]:
-                    typeof application.sloViolations === "string"
-                        ? JSON.parse(application.sloViolations)
-                        : application.sloViolations,
+                        {
+                            nodeKey: v4uuid(),
+                            isComposite: true,
+                            condition: "AND",
+                            not: false,
+                            children: [],
+                            violationThreshold: 0,
+                            evaluationPeriod: 0
+
+                        } :
+                        typeof application.sloViolations === "string"
+                            ? JSON.parse(application.sloViolations)
+                            : application.sloViolations,
                 slCreations:
                     !application.slCreations ?
-                     [{
-                      nodeKey: v4uuid(),
-                      isComposite: true,
-                      condition: "AND",
-                      not: false,
-                      children: []
-                    }]:
-                    typeof application.slCreations === "string"
-                        ? JSON.parse(application.slCreations)
-                        : application.slCreations,
+                        [{
+                            nodeKey: v4uuid(),
+                            isComposite: true,
+                            condition: "AND",
+                            not: false,
+                            children: []
+                        }] :
+                        typeof application.slCreations === "string"
+                            ? JSON.parse(application.slCreations)
+                            : application.slCreations,
                 slMetaConstraints:
                     !application.slMetaConstraints ?
-                         {
-                          nodeKey: v4uuid(),
-                          isComposite: true,
-                          condition: "AND",
-                          not: false,
-                          children: []
+                        {
+                            nodeKey: v4uuid(),
+                            isComposite: true,
+                            condition: "AND",
+                            not: false,
+                            children: []
                         } :
                         typeof application.slMetaConstraints === "string"
                             ? JSON.parse(application.slMetaConstraints)
-                                : application.slMetaConstraints,
+                            : application.slMetaConstraints,
                 utilityFunctions: application.utilityFunctions.map(
                     ({
                          functionName,
