@@ -9,7 +9,7 @@
     :v$="v$"
     :appId="applicationData.uuid"
     :loading="loadingStatus == 'loading'"
-    :graph-enabled="applicationData.status == 'running'"
+    :graph-enabled="(applicationData.status == 'running' || applicationData.status=='deploying')"
     :save-enabled="applicationData.status == 'draft' || applicationData.status == 'failed'"
     @saveClick="saveClickHandler"
   >
