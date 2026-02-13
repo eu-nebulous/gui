@@ -47,9 +47,9 @@
               v-if="application.status=='draft' || application.status=='failed'  || application.status=='ready' || !application.status"
               icon="PlayCircle" class="w-10 text-white" @click="deployApplication(application)"/>
           <Tippy content="Copy VR Token">
-            <Lucide v-if="application.status=='running' && !loadingToken" icon="Rotate3d" class="w-10 text-white"
+            <Lucide v-if="(application.status=='running' || application.status=='deploying' ) && !loadingToken" icon="Rotate3d" class="w-10 text-white"
                     @click="showApplicationGraph(application)"/>
-            <LoadingIcon icon="circles" v-if="application.status=='running' && loadingToken"/>
+            <LoadingIcon icon="circles" v-if="(application.status=='running' || application.status=='deploying' )  && loadingToken"/>
           </Tippy>
           <Lucide
               v-if="application.status=='draft' || application.status=='failed' || application.status=='ready' || !application.status"
